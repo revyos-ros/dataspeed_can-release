@@ -2,6 +2,11 @@
 Changelog for package dataspeed_can_msg_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.10 (2018-06-13)
+-------------------
+* Removed unnecessary rostest dependency
+* Contributors: Kevin Hallenbeck
+
 1.0.9 (2018-06-12)
 ------------------
 * Added tests for extended IDs, error frames, and RTR frames
