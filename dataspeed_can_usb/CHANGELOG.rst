@@ -2,6 +2,9 @@
 Changelog for package dataspeed_can_usb
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.10 (2018-06-13)
+-------------------
+
 1.0.9 (2018-06-12)
 ------------------
 * Removed the private dataspeed_boot_usb package as an exec dependency
