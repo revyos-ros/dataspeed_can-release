@@ -1,0 +1,89 @@
+ros-kinetic-dataspeed-can-usb (1.0.10-0jessie) jessie; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Wed, 13 Jun 2018 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.9-0jessie) jessie; urgency=high
+
+  * Removed the private dataspeed_boot_usb package as an exec dependency
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 12 Jun 2018 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.8-0jessie) jessie; urgency=high
+
+  * Detect old firmware versions and recommend update script
+  * Added script to update module firmware
+  * Updated module firmware to 10.3.0
+  * Added build dependency on roslib, needed for the ROS_DISTRO environment variable
+  * Use the simple filename 'udev' when installing rules, instead of the debian package name
+  * Added roslaunch test
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Mon, 09 Apr 2018 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.7-0jessie) jessie; urgency=high
+
+  * Added missing roslaunch dependency
+  * Added support for CAN error frames
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 19 Oct 2017 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.6-0jessie) jessie; urgency=high
+
+  * Only warn about dropped messages when the drop count changes
+  * Migrated from dataspeed_can_msgs to can_msgs (this will break dependent packages)
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 07 Sep 2017 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.5-0jessie) jessie; urgency=high
+
+  * Prioritize the local include folder (there were issues with catkin workspace overlays)
+  * Updated nodelets to the PLUGINLIB_EXPORT_CLASS macro
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Mon, 21 Aug 2017 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.4-0jessie) jessie; urgency=high
+
+  * Priority fix for udev on Indigo
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Mon, 08 May 2017 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.3-0jessie) jessie; urgency=high
+
+  * Install udev rules with dh_installudev
+  * Updated package.xml format to version 2
+  * Fixed copy paste error in example launch file
+  * Contributors: Kevin Hallenbeck, Lincoln Lorenz
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 25 Apr 2017 04:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.2-0jessie) jessie; urgency=high
+
+  * Throttle the 'not found' warning to every 10 seconds
+  * Install headers for use by other packages
+  * Option to specify USB device in constructor, option to specify textual name
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 24 Jan 2017 05:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.1-0jessie) jessie; urgency=high
+
+  * Added example launch file
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 17 Nov 2016 05:00:00 -0000
+
+ros-kinetic-dataspeed-can-usb (1.0.0-0jessie) jessie; urgency=high
+
+  * Initial release
+  * Contributors: Kevin Hallenbeck, Michael Lohrer
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Wed, 28 Sep 2016 04:00:00 -0000
+
+
