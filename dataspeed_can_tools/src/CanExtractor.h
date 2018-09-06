@@ -67,6 +67,8 @@ typedef struct {
   ByteOrder order;
   Sign sign;
   int start_bit;
+  Multiplexor multiplexor;
+  unsigned short multiplexNum;
 } RosCanSigStruct;
 
 typedef struct {
@@ -78,25 +80,34 @@ typedef struct {
 
 class CanExtractor {
 public:
-  CanExtractor(const std::string &dbc_file);
+  CanExtractor(const std::string &dbc_file, bool offline, bool expand = true, bool unknown = false);
+  CanExtractor(const std::vector<std::string> &dbc_file, bool offline, bool expand = true, bool unknown = false);
 
   bool getMessage(RosCanMsgStruct& can_msg);
-  void initPublishers(RosCanMsgStruct& can_msg, ros::NodeHandle& nh);
-  void openBag(std::string fname);
-  void closeBag();
+  void initPublishers(RosCanMsgStruct& info, ros::NodeHandle& nh);
+  bool openBag(const std::string &fname, rosbag::compression::CompressionType compression = rosbag::compression::Uncompressed);
+  bool closeBag();
   void pubMessage(const can_msgs::Frame& msg, const ros::Time &stamp = ros::Time(0));
   void pubMessage(const can_msgs::Frame::ConstPtr& msg, const ros::Time &stamp = ros::Time(0)) { pubMessage(*msg, stamp); }
 
 private:
+  template<class T>
+  void writeToBag(const std::string& frame, const ros::Time& stamp, const T& msg);
+  template<class T>
+  void pubCanSig(const RosCanMsgStruct& info, const T& sig_msg, const ros::Time& stamp, size_t i);
+  void pubCanMsg(const RosCanMsgStruct& info, const can_msgs::Frame& msg, const ros::Time& stamp);
   static uint64_t unsignedSignalData(uint64_t raw_data, const RosCanSigStruct& sig_props);
   static int64_t signedSignalData(uint64_t raw_data, const RosCanSigStruct& sig_props);
+  template<class T>
+  static T buildMsg(const RosCanSigStruct& info, const uint64_t& data, bool sign);
   static int getAppropriateSize(const RosCanSigStruct& sig_props, bool output_signed);
-  static void registerCanSignalPublisher(RosCanSigStruct& can_sig, ros::NodeHandle& nh_msg);
+  static void registerCanSignalPublisher(RosCanSigStruct& info, ros::NodeHandle& nh);
 
-  ros::NodeHandle nh_;
   DBCIterator dbc_;
   rosbag::Bag bag_;
   bool bag_open_;
+  std::string bag_fname_;
+  bool offline_;
   bool expand_;
   bool unknown_;
 

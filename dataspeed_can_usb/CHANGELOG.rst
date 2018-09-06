@@ -2,6 +2,14 @@
 Changelog for package dataspeed_can_usb
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.11 (2018-09-06)
+-------------------
+* Added option to connect to a specific USB device by MAC address
+* Added normal/listen-only mode options
+* Only subscribe to can_tx in normal mode, listen-only mode cannot transmit
+* Updated module firmware to 10.4.0
+* Contributors: Kevin Hallenbeck
+
 1.0.10 (2018-06-13)
 -------------------
 
