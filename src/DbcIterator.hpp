@@ -54,6 +54,7 @@ public:
   typedef messages_t::const_iterator const_iterator;
 
   // Constructors taking either a File or a Stream of a DBC-File
+  DBCIterator(const std::vector<std::string>& paths);
   DBCIterator(const std::string& path);
   DBCIterator(std::istream& stream);
 
@@ -69,7 +70,7 @@ public:
   }
 
 private:
-  void init(std::istream& stream);
+  void parseStream(std::istream& stream);
 
 };
 
