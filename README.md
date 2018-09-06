@@ -11,7 +11,14 @@ roslaunch dataspeed_can_usb example.launch
 
 # Parameters
 
-The four CAN bus channels have several parameters:
+Global parameters:
+
+* ```error_topic```: Separate topic for CAN error frames. Default: ```True```
+* ```mac_addr```: Connect to specific USB device by MAC address. Default: ```""``` for disabled
+* ```bitrate```: CAN bitrate in bit/s up to 1Mbit/s (if not set by channel). Default: ```0``` for disabled
+* ```mode```: CAN mode (normal/listen-only). Default: ```""``` for normal
+
+CAN channel parameters:
 
 * ```bitrate_X```: CAN bitrate in bit/s up to 1Mbit/s, 0 for disabled
 * ```channel_X_mask_Y```: Up to 32 mask/match filter pairs to filter received CAN messages
