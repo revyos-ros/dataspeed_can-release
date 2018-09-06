@@ -1,0 +1,12 @@
+Source: ros-indigo-dataspeed-can-msg-filters
+Section: misc
+Priority: extra
+Maintainer: Kevin Hallenbeck <khallenbeck@dataspeedinc.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-can-msgs, ros-indigo-catkin, ros-indigo-roscpp
+Homepage: http://dataspeedinc.com
+Standards-Version: 3.9.2
+
+Package: ros-indigo-dataspeed-can-msg-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-can-msgs, ros-indigo-roscpp
+Description: Time synchronize multiple CAN messages to get a single callback
