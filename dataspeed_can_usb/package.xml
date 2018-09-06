@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>dataspeed_can_usb</name>
-  <version>1.0.10</version>
+  <version>1.0.11</version>
   <description>
     Driver to interface with the Dataspeed Inc. USB CAN Tool
   </description>
