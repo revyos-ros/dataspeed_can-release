@@ -61,6 +61,15 @@ static bool getParamHex(const ros::NodeHandle &nh, const std::string& key, int& 
   return false;
 }
 
+static uint8_t getModeFromString(const std::string &str) {
+  if (str == "normal") {
+    return 0;
+  } else if (str == "listen-only") {
+    return 1;
+  }
+  return 0; // Default to "normal"
+}
+
 CanDriver::CanDriver(ros::NodeHandle &nh, ros::NodeHandle &nh_priv, lusb::UsbDevice *dev, const std::string &name, const ModuleVersion &firmware) :
     nh_(nh), name_(name), total_drops_(0), firmware_(firmware)
 {
@@ -70,38 +79,43 @@ CanDriver::CanDriver(ros::NodeHandle &nh, ros::NodeHandle &nh_priv, lusb::UsbDev
   // Get Parameters
   sync_time_ = false;
   error_topic_ = true;
-  int bitrate = 0;
+  std::string mode;
+  Channel channel = {0};
 #if 0
   priv_nh.getParam("sync_time", sync_time_);
 #endif
-  nh_priv.getParam("bitrate", bitrate);
+  nh_priv.getParam("bitrate", channel.bitrate);
+  nh_priv.getParam("mode", mode);
   nh_priv.getParam("error_topic", error_topic_);
+  nh_priv.getParam("mac_addr", mac_addr_);
 
-  bitrates_.resize(CanUsb::MAX_CHANNELS, bitrate);
-  filter_masks_.resize(CanUsb::MAX_CHANNELS);
-  filter_matches_.resize(CanUsb::MAX_CHANNELS);
+  channel.mode = getModeFromString(mode);
+  channels_.resize(CanUsb::MAX_CHANNELS, channel);
   for (unsigned int i = 0; i < CanUsb::MAX_CHANNELS; i++) {
-    std::stringstream ss;
-    ss << "bitrate_" << (i + 1);
-    nh_priv.getParam(ss.str(), bitrates_[i]);
+    std::string mode;
+    std::stringstream ss1, ss2;
+    ss1 << "bitrate_" << (i + 1);
+    ss2 << "mode_" << (i + 1);
+    nh_priv.getParam(ss1.str(), channels_[i].bitrate);
+    nh_priv.getParam(ss2.str(), mode);
+    channels_[i].mode = getModeFromString(mode);
     for (unsigned int j = 0; j < CanUsb::MAX_FILTERS; j++) {
       bool success = true;
-      int mask, match;
+      Filter filter;
       std::stringstream ss1, ss2;
       ss1 << "channel_" << (i + 1) << "_mask_" << j;
       ss2 << "channel_" << (i + 1) << "_match_" << j;
-      success &= getParamHex(nh_priv, ss1.str(), mask);
-      success &= getParamHex(nh_priv, ss2.str(), match);
+      success &= getParamHex(nh_priv, ss1.str(), (int&)filter.mask);
+      success &= getParamHex(nh_priv, ss2.str(), (int&)filter.match);
       if (success) {
-        filter_masks_[i].push_back((uint32_t)mask);
-        filter_matches_[i].push_back((uint32_t)match);
+        channels_[i].filters.push_back(filter);
       }
     }
   }
 
   serviceDevice();
 
-  // Set up Timers
+  // Setup Timers
   timer_service_ = nh.createWallTimer(ros::WallDuration(0.1), &CanDriver::timerServiceCallback, this);
   timer_flush_ = nh.createWallTimer(ros::WallDuration(0.001), &CanDriver::timerFlushCallback, this);
 }
@@ -166,10 +180,11 @@ void CanDriver::serviceDevice()
     pubs_err_.clear();
     pubs_.clear();
     subs_.clear();
-    if (dev_->open()) {
+    if (dev_->open(mac_addr_)) {
       if (dev_->reset()) {
         const ModuleVersion version(dev_->versionMajor(), dev_->versionMinor(), dev_->versionBuild());
         ROS_INFO("%s: version %s", name_.c_str(), dev_->version().c_str());
+        ROS_INFO("%s: MAC address %s", name_.c_str(), dev_->macAddr().toString().c_str());
         if (firmware_.valid() && version < firmware_) {
           ROS_WARN("Detected old %s firmware version %u.%u.%u, updating to %u.%u.%u is suggested. Execute `%s` to update.", name_.c_str(),
                    version.major(), version.minor(), version.build(),
@@ -189,17 +204,20 @@ void CanDriver::serviceDevice()
         if (!sync_time_ || synced) {
           bool success = true;
           for (unsigned int i = 0; i < dev_->numChannels(); i++) {
-            for (unsigned int j = 0; j < std::min(filter_masks_[i].size(), filter_matches_[i].size()); j++) {
-              if (dev_->addFilter(i, filter_masks_[i][j], filter_matches_[i][j])) {
-                ROS_INFO("%s: Ch%u, Mask: 0x%08X, Match: 0x%08X", name_.c_str(), i + 1, filter_masks_[i][j], filter_matches_[i][j]);
+            for (unsigned int j = 0; j < channels_[i].filters.size(); j++) {
+              const uint32_t mask = channels_[i].filters[j].mask;
+              const uint32_t match = channels_[i].filters[j].match;
+              if (dev_->addFilter(i, mask, match)) {
+                ROS_INFO("%s: Ch%u, Mask: 0x%08X, Match: 0x%08X", name_.c_str(), i + 1, mask, match);
               } else {
-                ROS_WARN("%s: Ch%u, Mask: 0x%08X, Match: 0x%08X failed", name_.c_str(), i + 1, filter_masks_[i][j], filter_matches_[i][j]);
+                ROS_WARN("%s: Ch%u, Mask: 0x%08X, Match: 0x%08X failed", name_.c_str(), i + 1, mask, match);
               }
             }
           }
           for (unsigned int i = 0; i < dev_->numChannels(); i++) {
-            int bitrate = i < bitrates_.size() ? bitrates_[i] : 0;
-            if (dev_->setBitrate(i, bitrate)) {
+            const int bitrate = i < channels_.size() ? channels_[i].bitrate : 0;
+            const uint8_t mode = i < channels_.size() ? channels_[i].mode : 0;
+            if (dev_->setBitrate(i, bitrate, mode)) {
               ROS_INFO("%s: Ch%u %ukbps", name_.c_str(), i + 1, bitrate / 1000);
             } else {
               ROS_WARN("%s: Ch%u %ukbps failed", name_.c_str(), i + 1, bitrate / 1000);
@@ -207,13 +225,17 @@ void CanDriver::serviceDevice()
             }
           }
           if (success) {
-            // Set up Publishers and Subscribers
+            // Setup Publishers and Subscribers
             for (unsigned int i = 0; i < dev_->numChannels(); i++) {
-              if (i < bitrates_.size() && bitrates_[i]) {
+              if (i < channels_.size() && channels_[i].bitrate) {
                 std::stringstream ns;
                 ns << "can_bus_" << (i + 1);
                 ros::NodeHandle node(nh_, ns.str());
-                subs_.push_back(node.subscribe<can_msgs::Frame>("can_tx", 100, boost::bind(&CanDriver::recvRos, this, _1, i)));
+                if (channels_[i].mode) {
+                  subs_.push_back(ros::Subscriber()); // Listen-only mode cannot transmit
+                } else {
+                  subs_.push_back(node.subscribe<can_msgs::Frame>("can_tx", 100, boost::bind(&CanDriver::recvRos, this, _1, i)));
+                }
                 pubs_.push_back(node.advertise<can_msgs::Frame>("can_rx", 100, false));
                 if (error_topic_) {
                   pubs_err_.push_back(node.advertise<can_msgs::Frame>("can_err", 100, false));
@@ -240,7 +262,11 @@ void CanDriver::serviceDevice()
         ROS_WARN("%s: Failed to reset", name_.c_str());
       }
     } else {
-      ROS_WARN_THROTTLE(10.0, "%s: not found", name_.c_str());
+      if (mac_addr_.empty()) {
+        ROS_WARN_THROTTLE(10.0, "%s: Not found", name_.c_str());
+      } else {
+        ROS_WARN_THROTTLE(10.0, "%s: MAC address '%s' not found", name_.c_str(), mac_addr_.c_str());
+      }
     }
   } else {
     std::vector<uint32_t> rx_drops, tx_drops;
