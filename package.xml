@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>dataspeed_can_tools</name>
-  <version>1.0.10</version>
+  <version>1.0.11</version>
   <description>
     CAN bus introspection
   </description>
@@ -21,7 +21,6 @@
   <depend>std_msgs</depend>
   <depend>can_msgs</depend>
 
-  <export>
-  </export>
+  <test_depend>rostest</test_depend>
 
 </package>

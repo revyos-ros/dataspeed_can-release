@@ -83,7 +83,7 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
   std::string preamble;
   sstream >> preamble;
   if (preamble != "SG_") {
-    sstream.setstate(std::ios_base::failbit);
+    in.setstate(std::ios_base::failbit);
     return in;
   }
 
