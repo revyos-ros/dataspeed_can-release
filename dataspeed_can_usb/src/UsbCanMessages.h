@@ -102,6 +102,10 @@ enum {
     USB_ID_GET_TIME      = 0x41,
     USB_ID_GET_STATS     = 0x42,
 };
+enum {
+    MODE_NORMAL = 0,
+    MODE_LISTEN_ONLY = 1,
+};
 typedef union PACK_ATTRIB {
     uint8_t msg_id;
     struct PACK_ATTRIB {
@@ -111,11 +115,13 @@ typedef union PACK_ATTRIB {
         Version firmware;
         Version bootloader;
         uint32_t serial_number;
+        uint8_t mac_addr[6];
     } version;
     struct PACK_ATTRIB {
         uint8_t msg_id;
         uint8_t channel;
-        uint16_t dummy;
+        uint8_t mode;
+        uint8_t dummy;
         uint32_t bitrate;
     } bus_cfg;
     struct PACK_ATTRIB {
