@@ -95,27 +95,42 @@ CanUsb::~CanUsb()
   }
 }
 
-bool CanUsb::configure()
+bool CanUsb::configure(const std::string &mac)
 {
   if (readVersion()) {
     if (getNumChannels()) {
-      dev_->startBulkReadThread(boost::bind(&CanUsb::recvStream, this, _1, _2), STREAM_ENDPOINT);
-      ready_ = true;
-      return true;
+      if (mac.empty() || mac_addr_.match(mac)) {
+        dev_->startBulkReadThread(boost::bind(&CanUsb::recvStream, this, _1, _2), STREAM_ENDPOINT);
+        ready_ = true;
+        return true;
+      }
     }
   }
   return false;
 }
-bool CanUsb::open()
+bool CanUsb::open(const std::string &mac)
 {
   if (!isOpen()) {
     if (!dev_->isOpen()) {
-      if (dev_->open()) {
-        if (configure()) {
-          return true;
+      if (mac.empty()) {
+        if (dev_->open()) {
+          if (configure()) {
+            return true;
+          }
+        }
+        dev_->close();
+      } else {
+        std::vector<lusb::UsbDevice::Location> list;
+        dev_->listDevices(list);
+        for (size_t i = 0; i < list.size(); i++) {
+          if (dev_->open(list[i])) {
+            if (configure(mac)) {
+              return true;
+            }
+          }
+          dev_->close();
         }
       }
-      dev_->close();
     } else {
       if (configure()) {
         return true;
@@ -148,12 +163,13 @@ bool CanUsb::readVersion()
   packet.msg_id = USB_ID_VERSION;
   if (writeConfig(&packet, sizeof(packet.msg_id))) {
     int len = readConfig(&packet, sizeof(packet));
-    if ((len >= (int)sizeof(packet.version)) && (packet.msg_id == USB_ID_VERSION)) {
+    if ((len >= (int)sizeof(packet.version) - (int)sizeof(packet.version.mac_addr)) && (packet.msg_id == USB_ID_VERSION)) {
       version_major_ = packet.version.firmware.major;
       version_minor_ = packet.version.firmware.minor;
       version_build_ = packet.version.firmware.build;
       version_comms_ = packet.version.comms;
       serial_number_ = packet.version.serial_number;
+      mac_addr_ = (len >= (int)sizeof(packet.version)) ? MacAddr(packet.version.mac_addr) : MacAddr();
       return true;
     }
   }
@@ -210,12 +226,13 @@ bool CanUsb::reset()
   return false;
 }
 
-bool CanUsb::setBitrate(unsigned int channel, uint32_t bitrate)
+bool CanUsb::setBitrate(unsigned int channel, uint32_t bitrate, uint8_t mode)
 {
   ConfigPacket packet;
   packet.msg_id = USB_ID_SET_BUS_CFG;
   packet.bus_cfg.channel = channel;
   packet.bus_cfg.bitrate = bitrate;
+  packet.bus_cfg.mode = mode;
   if (writeConfig(&packet, sizeof(packet.bus_cfg))) {
     int len = readConfig(&packet, sizeof(packet), USB_DEFAULT_TIMEOUT);
     if ((len >= (int)sizeof(packet.bus_cfg)) && (packet.msg_id == USB_ID_GET_BUS_CFG)) {
