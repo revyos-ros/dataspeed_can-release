@@ -66,7 +66,7 @@ std::istream& operator>>(std::istream& in, Message& msg) {
   while (in) {
     Signal sig;
     in >> sig;
-    if (in) {
+    if (in && !in.fail()) {
       msg.signals.push_back(sig);
     }
   }

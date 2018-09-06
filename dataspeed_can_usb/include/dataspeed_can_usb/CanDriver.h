@@ -61,7 +61,7 @@ class CanDriver
 public:
   CanDriver(ros::NodeHandle &nh, ros::NodeHandle &nh_priv, lusb::UsbDevice *dev = NULL,
             const std::string &name = std::string("Dataspeed USB CAN Tool"),
-            const ModuleVersion &firmware = ModuleVersion(10,3,0));
+            const ModuleVersion &firmware = ModuleVersion(10,4,0));
   ~CanDriver();
 
 private:
@@ -82,9 +82,17 @@ private:
   // Parameters
   bool sync_time_;
   bool error_topic_;
-  std::vector<int> bitrates_;
-  std::vector<std::vector<uint32_t> > filter_masks_;
-  std::vector<std::vector<uint32_t> > filter_matches_;
+  std::string mac_addr_;
+  typedef struct {
+    uint32_t mask;
+    uint32_t match;
+  } Filter;
+  typedef struct {
+    int bitrate;
+    uint8_t mode;
+    std::vector<Filter> filters;
+  } Channel;
+  std::vector<Channel> channels_;
 
   // Timers
   ros::WallTimer timer_service_;
