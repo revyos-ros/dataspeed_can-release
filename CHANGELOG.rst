@@ -2,6 +2,15 @@
 Changelog for package dataspeed_can_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.11 (2018-09-06)
+-------------------
+* Added support for multiple DBC files
+* Added support for multiplexed signals
+* Many changes to the command line arguments
+* Fixed bug with signals greater than 31 bits
+* Set CXX_STANDARD to C++11 when necessary
+* Contributors: Kevin Hallenbeck, Eric Myllyoja
+
 1.0.10 (2018-06-13)
 -------------------
 

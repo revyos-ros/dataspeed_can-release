@@ -38,11 +38,25 @@
 #include <fstream>
 #include <stdexcept>
 
+DBCIterator::DBCIterator(const std::vector<std::string>& paths) {
+  messageList.clear();
+  // Multiple files will overlap but this doesn't matter.
+  for (unsigned int i = 0; i < paths.size(); i++) {
+    std::ifstream file(paths[i].c_str());
+    if (file) {
+      parseStream(file);
+    } else {
+      throw std::invalid_argument("The File could not be opened");
+    }
+    file.close(); 
+  }
+}
+
 DBCIterator::DBCIterator(const std::string& path) {
-  ///@TODO: Support multiple files
+  messageList.clear();
   std::ifstream file(path.c_str());
   if (file) {
-    init(file);
+    parseStream(file);
   } else {
     throw std::invalid_argument("The File could not be opened");
   }
@@ -50,11 +64,10 @@ DBCIterator::DBCIterator(const std::string& path) {
 }
 
 DBCIterator::DBCIterator(std::istream& stream) {
-  init(stream);
+  parseStream(stream);
 }
 
-void DBCIterator::init(std::istream& stream) {
-  messageList.clear();
+void DBCIterator::parseStream(std::istream& stream) {
   std::vector<Message> messages;
   do {
     Message msg;
