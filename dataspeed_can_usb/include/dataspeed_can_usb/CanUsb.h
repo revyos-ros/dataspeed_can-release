@@ -39,6 +39,7 @@
 #include <vector>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include <dataspeed_can_usb/MacAddr.h>
 
 namespace lusb
 {
@@ -61,20 +62,21 @@ public:
   ~CanUsb();
 
   std::string version() const;
-  unsigned int versionMajor() const { return version_major_; }
-  unsigned int versionMinor() const { return version_minor_; }
-  unsigned int versionBuild() const { return version_build_; }
-  unsigned int versionComms() const { return version_comms_; }
-  unsigned int serialNumber() const { return serial_number_; }
+  uint16_t versionMajor() const { return version_major_; }
+  uint16_t versionMinor() const { return version_minor_; }
+  uint16_t versionBuild() const { return version_build_; }
+  uint16_t versionComms() const { return version_comms_; }
+  uint32_t serialNumber() const { return serial_number_; }
+  MacAddr macAddr() const { return mac_addr_; }
   unsigned int numChannels() const { return num_channels_; }
 
-  bool open();
+  bool open(const std::string &mac = std::string());
   bool isOpen();
   void closeDevice();
 
   bool reboot();
   bool reset();
-  bool setBitrate(unsigned int channel, uint32_t bitrate);
+  bool setBitrate(unsigned int channel, uint32_t bitrate, uint8_t mode = 0);
   bool addFilter(unsigned int channel, uint32_t mask, uint32_t match);
   bool getStats(std::vector<uint32_t> &rx_drops, std::vector<uint32_t> &tx_drops,
                 std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors, bool clear = false);
@@ -91,7 +93,7 @@ public:
 private:
   bool readVersion();
   bool getNumChannels();
-  bool configure();
+  bool configure(const std::string &mac = std::string());
 
   void recvStream(const void *data, int size);
 
@@ -107,11 +109,12 @@ private:
   bool heap_dev_;
   lusb::UsbDevice *dev_;
   Callback recv_callback_;
-  unsigned int version_major_;
-  unsigned int version_minor_;
-  unsigned int version_build_;
-  unsigned int version_comms_;
-  unsigned int serial_number_;
+  uint16_t version_major_;
+  uint16_t version_minor_;
+  uint16_t version_build_;
+  uint16_t version_comms_;
+  uint32_t serial_number_;
+  MacAddr mac_addr_;
   unsigned int num_channels_;
 
   TxQueue* queue_;
