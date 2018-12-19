@@ -2,6 +2,9 @@
 Changelog for package dataspeed_can_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.12 (2018-12-19)
+-------------------
+
 1.0.11 (2018-09-06)
 -------------------
 * Added support for multiple DBC files
