@@ -43,9 +43,6 @@ namespace dataspeed_can_usb
 class CanDriverNodelet : public nodelet::Nodelet
 {
 public:
-  CanDriverNodelet() {}
-  ~CanDriverNodelet() {}
-
   void onInit(void)
   {
     node_.reset(new CanDriver(getNodeHandle(), getPrivateNodeHandle()));
