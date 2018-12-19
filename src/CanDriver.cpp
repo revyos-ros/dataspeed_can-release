@@ -34,6 +34,7 @@
 
 #include <dataspeed_can_usb/CanDriver.h>
 #include <dataspeed_can_usb/CanUsb.h>
+#include <std_msgs/String.h>
 
 namespace dataspeed_can_usb
 {
@@ -71,7 +72,7 @@ static uint8_t getModeFromString(const std::string &str) {
 }
 
 CanDriver::CanDriver(ros::NodeHandle &nh, ros::NodeHandle &nh_priv, lusb::UsbDevice *dev, const std::string &name, const ModuleVersion &firmware) :
-    nh_(nh), name_(name), total_drops_(0), firmware_(firmware)
+    nh_(nh), nh_priv_(nh_priv), name_(name), total_drops_(0), firmware_(firmware)
 {
   dev_ = new CanUsb(dev);
   dev_->setRecvCallback(boost::bind(&CanDriver::recvDevice, this, _1, _2, _3, _4, _5));
@@ -180,10 +181,15 @@ void CanDriver::serviceDevice()
     pubs_err_.clear();
     pubs_.clear();
     subs_.clear();
+    pub_version_.shutdown();
     if (dev_->open(mac_addr_)) {
       if (dev_->reset()) {
         const ModuleVersion version(dev_->versionMajor(), dev_->versionMinor(), dev_->versionBuild());
         ROS_INFO("%s: version %s", name_.c_str(), dev_->version().c_str());
+        std_msgs::String version_msg;
+        pub_version_ = nh_priv_.advertise<std_msgs::String>("version", 1, true);
+        version_msg.data = dev_->version().c_str();
+        pub_version_.publish(version_msg);
         ROS_INFO("%s: MAC address %s", name_.c_str(), dev_->macAddr().toString().c_str());
         if (firmware_.valid() && version < firmware_) {
           ROS_WARN("Detected old %s firmware version %u.%u.%u, updating to %u.%u.%u is suggested. Execute `%s` to update.", name_.c_str(),
@@ -234,7 +240,7 @@ void CanDriver::serviceDevice()
                 if (channels_[i].mode) {
                   subs_.push_back(ros::Subscriber()); // Listen-only mode cannot transmit
                 } else {
-                  subs_.push_back(node.subscribe<can_msgs::Frame>("can_tx", 100, boost::bind(&CanDriver::recvRos, this, _1, i)));
+                  subs_.push_back(node.subscribe<can_msgs::Frame>("can_tx", 100, boost::bind(&CanDriver::recvRos, this, _1, i), ros::VoidConstPtr(), ros::TransportHints().tcpNoDelay()));
                 }
                 pubs_.push_back(node.advertise<can_msgs::Frame>("can_rx", 100, false));
                 if (error_topic_) {
