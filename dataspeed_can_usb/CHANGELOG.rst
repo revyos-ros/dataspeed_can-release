@@ -2,6 +2,12 @@
 Changelog for package dataspeed_can_usb
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.12 (2018-12-19)
+-------------------
+* Added tcpNoDelay() for subscribers
+* Added firmware version publisher
+* Contributors: Kevin Hallenbeck, Lincoln Lorenz
+
 1.0.11 (2018-09-06)
 -------------------
 * Added option to connect to a specific USB device by MAC address
