@@ -78,6 +78,7 @@ private:
 
   // NodeHandle
   ros::NodeHandle nh_;
+  ros::NodeHandle nh_priv_;
 
   // Parameters
   bool sync_time_;
@@ -105,6 +106,7 @@ private:
   std::vector<ros::Subscriber> subs_;
 
   // Published topics
+  ros::Publisher pub_version_;
   std::vector<ros::Publisher> pubs_;
   std::vector<ros::Publisher> pubs_err_;
 
