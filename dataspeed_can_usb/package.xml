@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>dataspeed_can_usb</name>
-  <version>1.0.11</version>
+  <version>1.0.12</version>
   <description>
     Driver to interface with the Dataspeed Inc. USB CAN Tool
   </description>
@@ -18,6 +18,7 @@
   <depend>roscpp</depend>
   <depend>nodelet</depend>
   <depend>can_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>lusb</depend>
 
   <build_depend>roslib</build_depend> <!-- Needed for ROS_DISTRO environment variable -->
