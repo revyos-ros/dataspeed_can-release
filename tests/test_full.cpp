@@ -157,11 +157,11 @@ TEST(FULL, Basic)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
-  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1, rx3.getCount());
-  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1, rx4.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
+  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx3.getCount());
+  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx4.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -221,11 +221,11 @@ TEST(FULL, IntelA)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
-  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1, rx3.getCount());
-  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1, rx4.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
+  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx3.getCount());
+  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx4.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -275,9 +275,9 @@ TEST(FULL, IntelB)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -320,8 +320,8 @@ TEST(FULL, IntelC)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -364,8 +364,8 @@ TEST(FULL, IntelD)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -413,9 +413,9 @@ TEST(FULL, AdvancedA)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -459,8 +459,8 @@ TEST(FULL, AdvancedB)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -503,8 +503,8 @@ TEST(FULL, AdvancedC)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -562,11 +562,11 @@ TEST(FULL, AdvancedD)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
-  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1, rx3.getCount());
-  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1, rx4.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
+  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx3.getCount());
+  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx4.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -627,11 +627,11 @@ TEST(FULL, MotorolaA)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
-  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1, rx3.getCount());
-  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1, rx4.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
+  ASSERT_TRUE(rx3.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx3.getCount());
+  ASSERT_TRUE(rx4.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx4.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -682,9 +682,9 @@ TEST(FULL, MotorolaB)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  ASSERT_TRUE(rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -727,8 +727,8 @@ TEST(FULL, MotorolaC)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -771,8 +771,8 @@ TEST(FULL, MotorolaD)
 
   // Publish the message again and wait for the response (now that the topics are connected)
   pub.publish(msg);
-  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
+  ASSERT_TRUE(rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  ASSERT_TRUE(rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -834,12 +834,12 @@ TEST(FULL, Multiplex)
 
   // Publish the new message and wait for the response
   pub.publish(msg);
-  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  EXPECT_FALSE(rx2.waitForMessage(DUR_B)); EXPECT_EQ(0, rx2.getCount());
-  EXPECT_FALSE(rx3.waitForMessage(DUR_B)); EXPECT_EQ(0, rx3.getCount());
-  EXPECT_FALSE(rx4.waitForMessage(DUR_B)); EXPECT_EQ(0, rx4.getCount());
-  EXPECT_FALSE(rx5.waitForMessage(DUR_B)); EXPECT_EQ(0, rx5.getCount());
+  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  EXPECT_FALSE(rx2.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx2.getCount());
+  EXPECT_FALSE(rx3.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx3.getCount());
+  EXPECT_FALSE(rx4.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx4.getCount());
+  EXPECT_FALSE(rx5.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx5.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -854,12 +854,12 @@ TEST(FULL, Multiplex)
 
   // Publish the new message and wait for the response
   pub.publish(msg);
-  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  EXPECT_TRUE (rx2.waitForMessage(DUR_A)); EXPECT_EQ(1, rx2.getCount());
-  EXPECT_FALSE(rx3.waitForMessage(DUR_B)); EXPECT_EQ(0, rx3.getCount());
-  EXPECT_FALSE(rx4.waitForMessage(DUR_B)); EXPECT_EQ(0, rx4.getCount());
-  EXPECT_FALSE(rx5.waitForMessage(DUR_B)); EXPECT_EQ(0, rx5.getCount());
+  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  EXPECT_TRUE (rx2.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx2.getCount());
+  EXPECT_FALSE(rx3.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx3.getCount());
+  EXPECT_FALSE(rx4.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx4.getCount());
+  EXPECT_FALSE(rx5.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx5.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -876,12 +876,12 @@ TEST(FULL, Multiplex)
 
   // Publish the new message and wait for the response
   pub.publish(msg);
-  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  EXPECT_FALSE(rx2.waitForMessage(DUR_B)); EXPECT_EQ(0, rx2.getCount());
-  EXPECT_TRUE (rx3.waitForMessage(DUR_A)); EXPECT_EQ(1, rx3.getCount());
-  EXPECT_TRUE (rx4.waitForMessage(DUR_A)); EXPECT_EQ(1, rx4.getCount());
-  EXPECT_FALSE(rx5.waitForMessage(DUR_B)); EXPECT_EQ(0, rx5.getCount());
+  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  EXPECT_FALSE(rx2.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx2.getCount());
+  EXPECT_TRUE (rx3.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx3.getCount());
+  EXPECT_TRUE (rx4.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx4.getCount());
+  EXPECT_FALSE(rx5.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx5.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);
@@ -899,12 +899,12 @@ TEST(FULL, Multiplex)
 
   // Publish the new message and wait for the response
   pub.publish(msg);
-  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1, rx0.getCount());
-  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1, rx1.getCount());
-  EXPECT_FALSE(rx2.waitForMessage(DUR_B)); EXPECT_EQ(0, rx2.getCount());
-  EXPECT_FALSE(rx3.waitForMessage(DUR_B)); EXPECT_EQ(0, rx3.getCount());
-  EXPECT_FALSE(rx4.waitForMessage(DUR_B)); EXPECT_EQ(0, rx4.getCount());
-  EXPECT_TRUE (rx5.waitForMessage(DUR_A)); EXPECT_EQ(1, rx5.getCount());
+  EXPECT_TRUE (rx0.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx0.getCount());
+  EXPECT_TRUE (rx1.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx1.getCount());
+  EXPECT_FALSE(rx2.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx2.getCount());
+  EXPECT_FALSE(rx3.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx3.getCount());
+  EXPECT_FALSE(rx4.waitForMessage(DUR_B)); EXPECT_EQ(0u, rx4.getCount());
+  EXPECT_TRUE (rx5.waitForMessage(DUR_A)); EXPECT_EQ(1u, rx5.getCount());
 
   // Compare the response with the expected values
   EXPECT_EQ(rx0.getLatest().header.stamp, msg.header.stamp);

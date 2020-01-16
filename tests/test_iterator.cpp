@@ -38,9 +38,9 @@ TEST(ITERATOR, data)
   DBCIterator dbc(ros::package::getPath("dataspeed_can_tools")+"/tests/Test.dbc");
   
   Message msg = dbc[0];
-  EXPECT_EQ(msg.getId(), 166);
+  EXPECT_EQ(msg.getId(), 166u);
   EXPECT_EQ(msg.getName(), "MultiplexTest");
-  EXPECT_EQ(msg.getDlc(), 5);
+  EXPECT_EQ(msg.getDlc(), 5u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "MultiplexedD");
@@ -122,9 +122,9 @@ TEST(ITERATOR, data)
 
   // AdvancedTestD
   msg = dbc[1];
-  EXPECT_EQ(msg.getId(), 165);
+  EXPECT_EQ(msg.getId(), 165u);
   EXPECT_EQ(msg.getName(), "AdvancedTestD");
-  EXPECT_EQ(msg.getDlc(), 4);
+  EXPECT_EQ(msg.getDlc(), 4u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "AdvancedSignal8");
@@ -177,9 +177,9 @@ TEST(ITERATOR, data)
 
   // AdvancedTestC
   msg = dbc[2];
-  EXPECT_EQ(msg.getId(), 164);
+  EXPECT_EQ(msg.getId(), 164u);
   EXPECT_EQ(msg.getName(), "AdvancedTestC");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "AdvancedSignal4");
@@ -196,9 +196,9 @@ TEST(ITERATOR, data)
 
   // AdvancedTestB
   msg = dbc[3];
-  EXPECT_EQ(msg.getId(), 163);
+  EXPECT_EQ(msg.getId(), 163u);
   EXPECT_EQ(msg.getName(), "AdvancedTestB");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "AdvancedSignal3");
@@ -215,9 +215,9 @@ TEST(ITERATOR, data)
 
   // AdvancedTestA
   msg = dbc[4];
-  EXPECT_EQ(msg.getId(), 162);
+  EXPECT_EQ(msg.getId(), 162u);
   EXPECT_EQ(msg.getName(), "AdvancedTestA");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "AdvancedSignal2");
@@ -246,9 +246,9 @@ TEST(ITERATOR, data)
 
   // MotorolaTestD
   msg = dbc[5];
-  EXPECT_EQ(msg.getId(), 196);
+  EXPECT_EQ(msg.getId(), 196u);
   EXPECT_EQ(msg.getName(), "MotorolaTestD");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
   EXPECT_EQ(msg[0].getName(), "MotorolaSignalU64");
   EXPECT_EQ(msg[0].getMultiplexor(), NONE);
@@ -264,9 +264,9 @@ TEST(ITERATOR, data)
 
   // MotorolaTestC
   msg = dbc[6];
-  EXPECT_EQ(msg.getId(), 195);
+  EXPECT_EQ(msg.getId(), 195u);
   EXPECT_EQ(msg.getName(), "MotorolaTestC");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
   EXPECT_EQ(msg[0].getName(), "MotorolaSignal64");
   EXPECT_EQ(msg[0].getMultiplexor(), NONE);
@@ -282,9 +282,9 @@ TEST(ITERATOR, data)
 
   // MotorolaTestB
   msg = dbc[7];
-  EXPECT_EQ(msg.getId(), 194);
+  EXPECT_EQ(msg.getId(), 194u);
   EXPECT_EQ(msg.getName(), "MotorolaTestB");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "MotorolaSignalU32");
@@ -313,9 +313,9 @@ TEST(ITERATOR, data)
 
   // MotorolaTestA
   msg = dbc[8];
-  EXPECT_EQ(msg.getId(), 193);
+  EXPECT_EQ(msg.getId(), 193u);
   EXPECT_EQ(msg.getName(), "MotorolaTestA");
-  EXPECT_EQ(msg.getDlc(), 6);
+  EXPECT_EQ(msg.getDlc(), 6u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
   
   EXPECT_EQ(msg[0].getName(), "MotorolaSignalU16");
@@ -368,9 +368,9 @@ TEST(ITERATOR, data)
 
   // IntelTestD
   msg = dbc[9];
-  EXPECT_EQ(msg.getId(), 180);
+  EXPECT_EQ(msg.getId(), 180u);
   EXPECT_EQ(msg.getName(), "IntelTestD");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
   EXPECT_EQ(msg[0].getName(), "IntelSignalU64");
   EXPECT_EQ(msg[0].getMultiplexor(), NONE);
@@ -386,9 +386,9 @@ TEST(ITERATOR, data)
 
   // IntelTestC
   msg = dbc[10];
-  EXPECT_EQ(msg.getId(), 179);
+  EXPECT_EQ(msg.getId(), 179u);
   EXPECT_EQ(msg.getName(), "IntelTestC");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
   EXPECT_EQ(msg[0].getName(), "IntelSignal64");
   EXPECT_EQ(msg[0].getMultiplexor(), NONE);
@@ -404,9 +404,9 @@ TEST(ITERATOR, data)
 
   // IntelTestB
   msg = dbc[11];
-  EXPECT_EQ(msg.getId(), 178);
+  EXPECT_EQ(msg.getId(), 178u);
   EXPECT_EQ(msg.getName(), "IntelTestB");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "IntelSignalU32");
@@ -435,9 +435,9 @@ TEST(ITERATOR, data)
 
   // IntelTestA
   msg = dbc[12];
-  EXPECT_EQ(msg.getId(), 177);
+  EXPECT_EQ(msg.getId(), 177u);
   EXPECT_EQ(msg.getName(), "IntelTestA");
-  EXPECT_EQ(msg.getDlc(), 6);
+  EXPECT_EQ(msg.getDlc(), 6u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "IntelSignalU16");
@@ -490,9 +490,9 @@ TEST(ITERATOR, data)
 
   // BasicTest
   msg = dbc[13];
-  EXPECT_EQ(msg.getId(), 161);
+  EXPECT_EQ(msg.getId(), 161u);
   EXPECT_EQ(msg.getName(), "BasicTest");
-  EXPECT_EQ(msg.getDlc(), 4);
+  EXPECT_EQ(msg.getDlc(), 4u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
 
   EXPECT_EQ(msg[0].getName(), "BasicSignal4");

@@ -44,9 +44,9 @@ TEST(MESSAGE, data)
   in >> msg;
   ASSERT_FALSE(in.fail());
   // Main
-  EXPECT_EQ(msg.getId(), 126);
+  EXPECT_EQ(msg.getId(), 126u);
   EXPECT_EQ(msg.getName(), "License");
-  EXPECT_EQ(msg.getDlc(), 8);
+  EXPECT_EQ(msg.getDlc(), 8u);
   EXPECT_EQ(msg.getFrom(), "EPAS");
   // sig[0]
   EXPECT_EQ(msg[0].getName(), "EXPIRED");
