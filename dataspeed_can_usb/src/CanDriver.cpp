@@ -81,7 +81,7 @@ CanDriver::CanDriver(ros::NodeHandle &nh, ros::NodeHandle &nh_priv, lusb::UsbDev
   sync_time_ = false;
   error_topic_ = true;
   std::string mode;
-  Channel channel = {0};
+  Channel channel;
 #if 0
   priv_nh.getParam("sync_time", sync_time_);
 #endif
@@ -297,12 +297,12 @@ void CanDriver::serviceDevice()
   }
 }
 
-void CanDriver::timerServiceCallback(const ros::WallTimerEvent& event)
+void CanDriver::timerServiceCallback(const ros::WallTimerEvent&)
 {
   serviceDevice();
 }
 
-void CanDriver::timerFlushCallback(const ros::WallTimerEvent& event)
+void CanDriver::timerFlushCallback(const ros::WallTimerEvent&)
 {
   dev_->flushMessages();
 }
