@@ -41,6 +41,29 @@
 
 namespace dataspeed_can_msg_filters
 {
+/*
+ * Synchronize several messages that don't have exact matching timestamps
+ *
+ * From the wiki (https://wiki.ros.org/message_filters/ApproximateTime):
+ * This is a policy used by message_filters::sync::Synchronizer to match messages coming on a set of topics.
+ * Contrary to message_filters::sync::ExactTime, it can match messages even if they have different time stamps.
+ * We call size of a set of messages the difference between the latest and earliest time stamp in the set.
+ *
+ * The algorithm is the product of long discussions with Blaise. It does not work like ExactTime except with
+ * matching allowed up to some epsilon time difference. Instead it finds the best match. It satisfies these properties:
+ *  -  The algorithm is parameter free. No need to specify an epsilon. Some parameters can be provided (see below),
+ *      but they are optional.
+ *  -  Messages are used only once. Two sets cannot share the same message. Some messages can be dropped.
+ *  -  Sets do not cross. For two sets S and T, their messages satisfy either Si <= Ti for all i, or Ti <= Si for all i,
+ *      where i runs over topics.
+ *  -  Sets are contiguous. There is at least one topic where there is no dropped message between the two sets.
+ *      In other words there is no room to form another set with the dropped messages.
+ *  -  Sets are of minimal size among the sets contiguous to the previous published set.
+ *  -  The output only depends on the time stamps, not on the arrival time of messages. It does assume that messages arrive
+ *      in order on each topic, but not even necessarily across topics (though the queue size must be large enough if there are
+ *      big differences or messages will be dropped). This means that ApproximateTime can be safely used on messages that have
+ *      suffered arbitrary networking or processing delays.
+ */
 class ApproximateTime
 {
 public:
@@ -371,13 +394,34 @@ public:
     }
   }
 
-
+  /*
+   * Set the Age penalty: when comparing the size of sets, later intervals are penalized by a factor (1+AgePenalty).
+   * The default is 0. A non zero penalty can help output sets earlier, or output more sets, at some cost in quality.
+   */
   void setAgePenalty(double age_penalty) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
     ROS_ASSERT(age_penalty >= 0);
     age_penalty_ = age_penalty;
   }
 
+  /*
+   * Set the Inter message lower bound: if messages of a particular topic cannot be closer together than a known interval,
+   * providing this lower bound will not change the output but will allow the algorithm to conclude earlier that a given
+   * set is optimal, reducing delays. With the default value of 0, for messages spaced on average by a duration T,
+   * the algorithm can introduce a delay of about T. With good bounds provided a set can often be published as soon as
+   * the last message of the set is received. An incorrect bound will result in suboptimal sets being selected. A typical
+   * bound is, say, 1/2 the frame rate of a camera.
+   */
+  void setInterMessageLowerBound(ros::Duration lower_bound) {
+    ROS_ASSERT(lower_bound >= ros::Duration(0,0));
+    for (size_t i = 0; i < vector_.size(); i++) {
+      vector_[i].inter_message_lower_bounds = lower_bound;
+    }
+  }
+
+  /*
+   * Set the Inter message lower bound for each individual message index
+   */
   void setInterMessageLowerBound(size_t i, ros::Duration lower_bound) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
     ROS_ASSERT(lower_bound >= ros::Duration(0,0));
@@ -385,6 +429,10 @@ public:
     vector_[i].inter_message_lower_bounds = lower_bound;
   }
 
+  /*
+   * Set the Max interval duration: sets of more than this size will not be considered (disabled by default). The effect
+   * is similar to throwing away a posteriori output sets that are too large, but it can be a little better.
+   */
   void setMaxIntervalDuration(ros::Duration max_interval_duration) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
     ROS_ASSERT(max_interval_duration >= ros::Duration(0,0));
