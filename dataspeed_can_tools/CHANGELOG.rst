@@ -2,6 +2,14 @@
 Changelog for package dataspeed_can_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.14 (2020-01-16)
+-------------------
+
+1.0.13 (2019-01-08)
+-------------------
+* Added advance compiler error checking and fixed newly exposed errors
+* Contributors: Kevin Hallenbeck, Lincoln Lorenz
+
 1.0.12 (2018-12-19)
 -------------------
 
