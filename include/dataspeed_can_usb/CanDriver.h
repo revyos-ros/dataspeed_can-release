@@ -84,15 +84,16 @@ private:
   bool sync_time_;
   bool error_topic_;
   std::string mac_addr_;
-  typedef struct {
+  struct Filter {
     uint32_t mask;
     uint32_t match;
-  } Filter;
-  typedef struct {
+  };
+  struct Channel {
+    Channel() : bitrate(0), mode(0) {}
     int bitrate;
     uint8_t mode;
     std::vector<Filter> filters;
-  } Channel;
+  };
   std::vector<Channel> channels_;
 
   // Timers
