@@ -51,7 +51,12 @@ namespace dataspeed_can_usb
 class ModuleVersion {
 public:
   ModuleVersion() : full(0) {};
-  ModuleVersion(uint16_t major, uint16_t minor, uint16_t build) : major_(major), minor_(minor), build_(build), extra_(0) {};
+  ModuleVersion(uint16_t major, uint16_t minor, uint16_t build) :
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    build_(build), minor_(minor), major_(major), extra_(0) {};
+#elif __BYTE_ORDER == __BIG_ENDIAN
+    extra_(0), major_(major), minor_(minor), build_(build) {};
+#endif
   bool operator<(const ModuleVersion& other) const { return this->full < other.full; }
   bool operator>(const ModuleVersion& other) const { return this->full > other.full; }
   bool operator<=(const ModuleVersion& other) const { return this->full <= other.full; }

@@ -194,7 +194,7 @@ void CanUsb::recvStream(const void *data, int size)
 {
   if (recv_callback_) {
     const MessageBuffer *ptr = ((StreamPacket*)data)->msg;
-    while (size >= sizeof(*ptr)) {
+    while (size >= (int)sizeof(*ptr)) {
         size -= sizeof(*ptr);
         recv_callback_(ptr->channel, ptr->id, ptr->extended, ptr->dlc, ptr->data);
         ptr++;
@@ -261,8 +261,9 @@ bool CanUsb::addFilter(unsigned int channel, uint32_t mask, uint32_t match)
 }
 
 bool CanUsb::getStats(std::vector<uint32_t> &rx_drops, std::vector<uint32_t> &tx_drops,
-                      std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors, bool clear)
+                      std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors, bool)
 {
+  // TODO: implement clear functionality (last param)
   ConfigPacket packet;
   packet.msg_id = USB_ID_GET_STATS;
   if (writeConfig(&packet, sizeof(packet.bus_cfg))) {
