@@ -2,6 +2,9 @@
 Changelog for package dataspeed_can_msg_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.15 (2020-01-24)
+-------------------
+
 1.0.14 (2020-01-16)
 -------------------
 * Make setting the intermessage lowerbound simpler
