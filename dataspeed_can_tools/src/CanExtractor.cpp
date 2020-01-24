@@ -203,7 +203,7 @@ void CanExtractor::initPublishers(RosCanMsgStruct& info, ros::NodeHandle& nh)
   info.message_pub = nh.advertise<can_msgs::Frame>(info.msg_name, 1);
 
   if (expand_) {
-    ROS_DEBUG("Initializing publishers for %lu signals...",info.sigs.size());
+    ROS_DEBUG("Initializing publishers for %zu signals...", info.sigs.size());
     for (size_t i=0; i<info.sigs.size(); i++){
       registerCanSignalPublisher(info.sigs[i], nh_msg);
     }

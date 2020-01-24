@@ -2,6 +2,11 @@
 Changelog for package dataspeed_can_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.15 (2020-01-24)
+-------------------
+* Use %zu for portable printf() size type
+* Contributors: Kevin Hallenbeck
+
 1.0.14 (2020-01-16)
 -------------------
 
