@@ -1,0 +1,13 @@
+Source: ros-noetic-dataspeed-can-usb
+Section: misc
+Priority: optional
+Maintainer: Kevin Hallenbeck <khallenbeck@dataspeedinc.com>
+Build-Depends: debhelper (>= 9.0.0), ros-noetic-can-msgs, ros-noetic-catkin, ros-noetic-lusb, ros-noetic-nodelet, ros-noetic-roscpp, ros-noetic-roslaunch, ros-noetic-roslib, ros-noetic-std-msgs
+Homepage: http://dataspeedinc.com
+Standards-Version: 3.9.2
+
+Package: ros-noetic-dataspeed-can-usb
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-noetic-can-msgs, ros-noetic-lusb, ros-noetic-nodelet, ros-noetic-roscpp, ros-noetic-roslaunch, ros-noetic-std-msgs
+Description: Driver to interface with the Dataspeed Inc.
+ USB CAN Tool
