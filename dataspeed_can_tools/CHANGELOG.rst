@@ -2,6 +2,13 @@
 Changelog for package dataspeed_can_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.16 (2020-07-07)
+-------------------
+* Increase CMake minimum version to 3.0.2 to avoid warning about CMP0048
+  http://wiki.ros.org/noetic/Migration#Increase_required_CMake_version_to_avoid_author_warning
+* Fix processing bags with DBC files for extended CAN IDs
+* Contributors: Kevin Hallenbeck
+
 1.0.15 (2020-01-24)
 -------------------
 * Use %zu for portable printf() size type
