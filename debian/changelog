@@ -1,0 +1,115 @@
+ros-melodic-dataspeed-can-msg-filters (1.0.16-1bionic) bionic; urgency=high
+
+  * Increase CMake minimum version to 3.0.2 to avoid warning about CMP0048
+    http://wiki.ros.org/noetic/Migration#Increase_required_CMake_version_to_avoid_author_warning
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 07 Jul 2020 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.15-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Fri, 24 Jan 2020 05:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.14-1bionic) bionic; urgency=high
+
+  * Make setting the intermessage lowerbound simpler
+  * Document Approximate Time synchronizer using ros wiki
+  * Contributors: Kevin Hallenbeck, Lincoln Lorenz
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 16 Jan 2020 05:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.13-1bionic) bionic; urgency=high
+
+  * Added advance compiler error checking and fixed newly exposed errors
+  * Contributors: Kevin Hallenbeck, Lincoln Lorenz
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 08 Jan 2019 05:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.12-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Wed, 19 Dec 2018 05:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.11-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 06 Sep 2018 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.10-1bionic) bionic; urgency=high
+
+  * Removed unnecessary rostest dependency
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Wed, 13 Jun 2018 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.9-1bionic) bionic; urgency=high
+
+  * Added tests for extended IDs, error frames, and RTR frames
+  * Ported tests from ros_comm/message_filters/approximate_time_policy
+  * Distinguish between standard and extended IDs with the MSB of the ID
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 12 Jun 2018 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.8-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Mon, 09 Apr 2018 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.7-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 19 Oct 2017 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.6-1bionic) bionic; urgency=high
+
+  * Migrated from dataspeed_can_msgs to can_msgs (this will break dependent packages)
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 07 Sep 2017 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.5-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Mon, 21 Aug 2017 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.4-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Mon, 08 May 2017 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.3-1bionic) bionic; urgency=high
+
+  * Updated package.xml format to version 2
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 25 Apr 2017 04:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.2-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Tue, 24 Jan 2017 05:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.1-1bionic) bionic; urgency=high
+
+
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Thu, 17 Nov 2016 05:00:00 -0000
+
+ros-melodic-dataspeed-can-msg-filters (1.0.0-1bionic) bionic; urgency=high
+
+  * Initial release
+  * Contributors: Kevin Hallenbeck
+
+ -- Kevin Hallenbeck <khallenbeck@dataspeedinc.com>  Wed, 28 Sep 2016 04:00:00 -0000
+
+
