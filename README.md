@@ -1,3 +1,33 @@
+## dataspeed_can (melodic) - 1.0.16-1
+
+The packages in the `dataspeed_can` repository were released into the `melodic` distro by running `/usr/bin/bloom-release dataspeed_can --rosdistro melodic` on `Tue, 07 Jul 2020 20:26:13 -0000`
+
+These packages were released:
+- `dataspeed_can`
+- `dataspeed_can_msg_filters`
+- `dataspeed_can_tools`
+- `dataspeed_can_usb`
+
+These packages were explicitly ignored:
+- `dataspeed_can_msgs`
+
+Version of package(s) in repository `dataspeed_can`:
+
+- upstream repository: https://bitbucket.org/dataspeedinc/dataspeed_can.git
+- release repository: https://github.com/DataspeedInc-release/dataspeed_can-release.git
+- rosdistro version: `1.0.15-1`
+- old version: `1.0.15-1`
+- new version: `1.0.16-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.7`
+- catkin_pkg version: `0.4.22`
+- rosdep version: `0.19.0`
+- rosdistro version: `0.8.2`
+- vcstools version: `0.1.42`
+
+
 ## dataspeed_can (noetic) - 1.0.16-1
 
 The packages in the `dataspeed_can` repository were released into the `noetic` distro by running `/usr/bin/bloom-release dataspeed_can --rosdistro noetic` on `Tue, 07 Jul 2020 20:18:24 -0000`
