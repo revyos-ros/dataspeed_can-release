@@ -1,0 +1,12 @@
+Source: ros-noetic-dataspeed-can-tools
+Section: misc
+Priority: optional
+Maintainer: Micho Radovnikovich <mradovnikovich@dataspeedinc.com>
+Build-Depends: debhelper (>= 9.0.0), ros-noetic-can-msgs, ros-noetic-catkin, ros-noetic-rosbag, ros-noetic-roscpp, ros-noetic-roslib, ros-noetic-rostest, ros-noetic-std-msgs
+Homepage: http://dataspeedinc.com
+Standards-Version: 3.9.2
+
+Package: ros-noetic-dataspeed-can-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-noetic-can-msgs, ros-noetic-rosbag, ros-noetic-roscpp, ros-noetic-roslib, ros-noetic-std-msgs
+Description: CAN bus introspection
