@@ -2,6 +2,12 @@
 Changelog for package dataspeed_can_msg_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.16 (2020-07-07)
+-------------------
+* Increase CMake minimum version to 3.0.2 to avoid warning about CMP0048
+  http://wiki.ros.org/noetic/Migration#Increase_required_CMake_version_to_avoid_author_warning
+* Contributors: Kevin Hallenbeck
+
 1.0.15 (2020-01-24)
 -------------------
 
