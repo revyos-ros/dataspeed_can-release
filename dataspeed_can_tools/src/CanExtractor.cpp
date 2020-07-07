@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2018, Dataspeed Inc.
+ *  Copyright (c) 2015-2020, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -295,7 +295,7 @@ void CanExtractor::pubMessage(const can_msgs::Frame& msg, const ros::Time &stamp
   // Check for valid message information
   const uint32_t id = msg.id | (msg.is_extended ? 0x80000000 : 0x00000000);
   if (msgs_.find(id) == msgs_.end()) {
-    ROS_WARN("Bad message ID...");
+    ROS_WARN("Skipping unknown message ID: 0x%03X", id);
     return;
   }
   const RosCanMsgStruct &info = msgs_[id];
