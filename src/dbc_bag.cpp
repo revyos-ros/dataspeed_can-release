@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2018, Dataspeed Inc.
+ *  Copyright (c) 2015-2020, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
     BOOST_FOREACH(rosbag::MessageInstance const m, view) {
       can_msgs::Frame::ConstPtr msg = m.instantiate<can_msgs::Frame>();
       dataspeed_can_tools::RosCanMsgStruct can_msg;
-      can_msg.id = msg->id;
+      can_msg.id = msg->id | (msg->is_extended ? 0x80000000 : 0x00000000);
       extractor.getMessage(can_msg);
       extractor.pubMessage(msg, m.getTime());
 
