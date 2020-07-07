@@ -1,0 +1,12 @@
+Source: ros-noetic-dataspeed-can-msg-filters
+Section: misc
+Priority: optional
+Maintainer: Kevin Hallenbeck <khallenbeck@dataspeedinc.com>
+Build-Depends: debhelper (>= 9.0.0), ros-noetic-can-msgs, ros-noetic-catkin, ros-noetic-roscpp
+Homepage: http://dataspeedinc.com
+Standards-Version: 3.9.2
+
+Package: ros-noetic-dataspeed-can-msg-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-noetic-can-msgs, ros-noetic-roscpp
+Description: Time synchronize multiple CAN messages to get a single callback
