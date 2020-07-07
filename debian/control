@@ -1,0 +1,12 @@
+Source: ros-noetic-dataspeed-can
+Section: misc
+Priority: optional
+Maintainer: Kevin Hallenbeck <khallenbeck@dataspeedinc.com>
+Build-Depends: debhelper (>= 9.0.0), ros-noetic-catkin
+Homepage: http://dataspeedinc.com
+Standards-Version: 3.9.2
+
+Package: ros-noetic-dataspeed-can
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-noetic-dataspeed-can-msg-filters, ros-noetic-dataspeed-can-tools, ros-noetic-dataspeed-can-usb
+Description: CAN bus tools using Dataspeed hardware
