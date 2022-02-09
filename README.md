@@ -1,3 +1,29 @@
+## dataspeed_can (foxy) - 2.0.1-1
+
+The packages in the `dataspeed_can` repository were released into the `foxy` distro by running `/usr/bin/bloom-release --rosdistro foxy --track foxy dataspeed_can --edit` on `Wed, 09 Feb 2022 19:17:15 -0000`
+
+These packages were released:
+- `dataspeed_can`
+- `dataspeed_can_msg_filters`
+- `dataspeed_can_usb`
+
+Version of package(s) in repository `dataspeed_can`:
+
+- upstream repository: https://bitbucket.org/dataspeedinc/dataspeed_can.git
+- release repository: unknown
+- rosdistro version: `null`
+- old version: `null`
+- new version: `2.0.1-1`
+
+Versions of tools used:
+
+- bloom version: `0.10.7`
+- catkin_pkg version: `0.4.24`
+- rosdep version: `0.21.0`
+- rosdistro version: `0.8.3`
+- vcstools version: `0.1.42`
+
+
 ## dataspeed_can (kinetic) - 1.0.16-1
 
 The packages in the `dataspeed_can` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release dataspeed_can --rosdistro kinetic` on `Tue, 07 Jul 2020 20:38:45 -0000`
