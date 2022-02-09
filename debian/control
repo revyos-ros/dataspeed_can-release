@@ -1,0 +1,12 @@
+Source: ros-foxy-dataspeed-can
+Section: misc
+Priority: optional
+Maintainer: Kevin Hallenbeck <khallenbeck@dataspeedinc.com>
+Build-Depends: debhelper (>= 9.0.0), ros-foxy-ament-cmake, ros-foxy-ros-workspace
+Homepage: http://dataspeedinc.com
+Standards-Version: 3.9.2
+
+Package: ros-foxy-dataspeed-can
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-foxy-dataspeed-can-msg-filters, ros-foxy-dataspeed-can-usb, ros-foxy-ros-workspace
+Description: CAN bus tools using Dataspeed hardware
