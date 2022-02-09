@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2020, Dataspeed Inc.
+ *  Copyright (c) 2015-2021, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,53 +32,41 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#ifndef _DATASPEED_CAN_USB_CAN_DRIVER_H_
-#define _DATASPEED_CAN_USB_CAN_DRIVER_H_
+#pragma once
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 // ROS messages
-#include <can_msgs/Frame.h>
+#include <can_msgs/msg/frame.hpp>
+#include <std_msgs/msg/string.hpp> // Deprecated (ros >= foxy)
 
 // Mutex
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 // Module Version class
-#include <dataspeed_can_usb/ModuleVersion.h>
+#include <dataspeed_can_usb/ModuleVersion.hpp>
 
-namespace lusb
-{
+namespace lusb {
 class UsbDevice;
 }
 
-namespace dataspeed_can_usb
-{
-class CanUsb;
+namespace dataspeed_can_usb {
 
-class CanDriver
-{
+static constexpr ModuleVersion kFirmwareVersion(10, 4, 0);
+
+class CanUsb;
+class CanDriver : public rclcpp::Node {
 public:
-  CanDriver(ros::NodeHandle &nh, ros::NodeHandle &nh_priv, lusb::UsbDevice *dev = NULL,
-            const std::string &name = std::string("Dataspeed USB CAN Tool"),
-            const ModuleVersion &firmware = ModuleVersion(10,4,0));
+  CanDriver(const rclcpp::NodeOptions &options);
   ~CanDriver();
 
 private:
-  void timerServiceCallback(const ros::WallTimerEvent& event);
-  void timerFlushCallback(const ros::WallTimerEvent& event);
-  void recvRos(const can_msgs::Frame::ConstPtr& msg, unsigned int channel);
-
+  void timerServiceCallback();
+  void timerFlushCallback();
+  void recvRos(const can_msgs::msg::Frame::ConstSharedPtr msg, unsigned int channel);
   void recvDevice(unsigned int channel, uint32_t id, bool extended, uint8_t dlc, const uint8_t data[8]);
   void serviceDevice();
-  bool sampleTimeOffset(ros::WallDuration &offset, ros::WallDuration &delay);
-  inline ros::WallTime stampDev2Ros(unsigned int dev_stamp) {
-    return ros::WallTime(dev_stamp / 1000000, (dev_stamp % 1000000) * 1000);
-  }
-
-  // NodeHandle
-  ros::NodeHandle nh_;
-  ros::NodeHandle nh_priv_;
+  bool sampleTimeOffset(rclcpp::Duration &offset, rclcpp::Duration &delay);
 
   // Parameters
   bool sync_time_;
@@ -89,42 +77,38 @@ private:
     uint32_t match;
   };
   struct Channel {
-    Channel() : bitrate(0), mode(0) {}
-    int bitrate;
-    uint8_t mode;
+    int bitrate = 0;
+    uint8_t mode = 0;
     std::vector<Filter> filters;
   };
   std::vector<Channel> channels_;
 
   // Timers
-  ros::WallTimer timer_service_;
-  ros::WallTimer timer_flush_;
+  rclcpp::TimerBase::SharedPtr timer_service_;
+  rclcpp::TimerBase::SharedPtr timer_flush_;
 
   // USB Device
   CanUsb *dev_;
 
   // Subscribed topics
-  std::vector<ros::Subscriber> subs_;
+  std::vector<rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr> subs_;
 
   // Published topics
-  ros::Publisher pub_version_;
-  std::vector<ros::Publisher> pubs_;
-  std::vector<ros::Publisher> pubs_err_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_version_;
+  std::vector<rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr> pubs_;
+  std::vector<rclcpp::Publisher<can_msgs::msg::Frame>::SharedPtr> pubs_err_;
 
   // Mutex for vector of publishers
-  boost::mutex mutex_;
+  std::mutex mutex_;
 
   // Name prefix for print statements
   std::string name_;
 
   // Number of total drops for status warnings
-  uint32_t total_drops_;
+  uint32_t total_drops_ = 0;
 
   // Latest firmware version
-  ModuleVersion firmware_;
+  ModuleVersion firmware_ = kFirmwareVersion;
 };
 
 } // namespace dataspeed_can_usb
-
-#endif // _DATASPEED_CAN_USB_CAN_DRIVER_H_
-

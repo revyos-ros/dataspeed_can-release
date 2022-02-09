@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 // File under test
-#include <dataspeed_can_usb/MacAddr.h>
+#include <dataspeed_can_usb/MacAddr.hpp>
 using namespace dataspeed_can_usb;
 
 // Test converting to string
@@ -147,4 +147,3 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-

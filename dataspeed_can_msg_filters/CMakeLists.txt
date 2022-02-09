@@ -1,32 +1,35 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(dataspeed_can_msg_filters)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  can_msgs
-)
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "Enabling coverage testing")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 endif()
 
-add_compile_options(${TARGET_NAME} -Wall -Wextra -Werror) #-pedantic fails in rosconsole https://github.com/ros/rosconsole/issues/9
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(can_msgs REQUIRED)
 
-catkin_package(
-  INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp can_msgs
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION include/${PROJECT_NAME}
 )
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
-
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
-
-if (CATKIN_ENABLE_TESTING)
-  add_subdirectory(tests)
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(${PROJECT_NAME}_test tests/test.cpp)
+  target_include_directories(${PROJECT_NAME}_test PUBLIC include)
+  ament_target_dependencies(${PROJECT_NAME}_test "rclcpp" "can_msgs")
 endif()
+
+ament_export_include_directories(include)
+ament_package()

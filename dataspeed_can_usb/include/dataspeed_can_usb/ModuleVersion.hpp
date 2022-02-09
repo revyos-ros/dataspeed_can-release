@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2020, Dataspeed Inc.
+ *  Copyright (c) 2015-2021, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -31,31 +31,65 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
+#pragma once
+#include <cstdint>
 
-#include <pluginlib/class_list_macros.h>
-#include <nodelet/nodelet.h>
+// Undefine GNU C system macros that we use for other purposes
+#ifdef major
+#undef major
+#endif
+#ifdef minor
+#undef minor
+#endif
 
-#include <dataspeed_can_usb/CanDriver.h>
+namespace dataspeed_can_usb {
 
-namespace dataspeed_can_usb
-{
-
-class CanDriverNodelet : public nodelet::Nodelet
-{
+class ModuleVersion {
 public:
-  void onInit(void)
-  {
-    node_.reset(new CanDriver(getNodeHandle(), getPrivateNodeHandle()));
+  constexpr ModuleVersion() {}
+  constexpr ModuleVersion(const uint16_t major, const uint16_t minor, const uint16_t build)
+      : major_(major), minor_(minor), build_(build) {}
+  constexpr bool operator<(const ModuleVersion& other) const {
+    return this->full() < other.full();
   }
-
+  constexpr bool operator>(const ModuleVersion& other) const {
+    return this->full() > other.full();
+  }
+  constexpr bool operator<=(const ModuleVersion& other) const {
+    return this->full() <= other.full();
+  }
+  constexpr bool operator>=(const ModuleVersion& other) const {
+    return this->full() >= other.full();
+  }
+  constexpr bool operator==(const ModuleVersion& other) const {
+    return this->full() == other.full();
+  }
+  constexpr bool operator!=(const ModuleVersion& other) const {
+    return this->full() != other.full();
+  }
+  constexpr bool valid() const {
+    return full() != 0;
+  }
+  constexpr uint64_t full() const {
+    // Bit shifting is more portable than unions
+    uint64_t major = (uint64_t)major_ << 32;
+    uint64_t minor = (uint64_t)minor_ << 16;
+    uint64_t build = (uint64_t)build_;
+    return major | minor | build;
+  }
+  constexpr uint16_t major() const {
+    return major_;
+  }
+  constexpr uint16_t minor() const {
+    return minor_;
+  }
+  constexpr uint16_t build() const {
+    return build_;
+  }
 private:
-  boost::shared_ptr<CanDriver> node_;
+  uint16_t major_ = 0;
+  uint16_t minor_ = 0;
+  uint16_t build_ = 0;
 };
 
 } // namespace dataspeed_can_usb
-
-// Register this plugin with pluginlib.  Names must match nodelets.xml.
-//
-// parameters: class type, base class type
-PLUGINLIB_EXPORT_CLASS(dataspeed_can_usb::CanDriverNodelet, nodelet::Nodelet);
-

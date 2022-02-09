@@ -6,7 +6,7 @@
 # Example
 
 ```bash
-roslaunch dataspeed_can_usb example.launch
+ros2 launch dataspeed_can_usb example.launch.xml
 ```
 
 # Parameters
@@ -26,7 +26,7 @@ CAN channel parameters:
 
 # Troubleshooting
 
-* ```[WARN]: Dataspeed USB CAN Tool: not found```
+* ```[WARN]: Dataspeed USB CAN Tool: Not found```
     * Is the device plugged in to a USB port and powered with 12V?
         * The power LED should blink green every two seconds.
     * Can Linux see the USB device?
@@ -39,8 +39,3 @@ CAN channel parameters:
         * Otherwise, follow the directions in [90-DataspeedUsbCanToolRules.rules](dataspeed_can_usb/udev/90-DataspeedUsbCanToolRules.rules) to perform a manual install.
 * Why is the power LED blinking green?
     * The power LED blinks green every two seconds under normal operation.
-
-# Migration
-
-In September 2017, the ROS message type was migrated to [can_msgs/Frame](http://docs.ros.org/api/can_msgs/html/msg/Frame.html). See [can_msgs_migration](can_msgs_migration.md) for more details.
-

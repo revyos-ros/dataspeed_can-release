@@ -1,93 +1,86 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(dataspeed_can_usb)
 
-find_package(catkin REQUIRED COMPONENTS
-  roslib
-  roscpp
-  nodelet
-  can_msgs
-  std_msgs
-  lusb
-)
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "Enabling coverage testing")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 endif()
 
-add_compile_options(${TARGET_NAME} -Wall -Wextra -Werror) #-pedantic fails in rosconsole https://github.com/ros/rosconsole/issues/9
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(can_msgs REQUIRED)
+find_package(lusb REQUIRED)
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-)
-
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
-
-add_library(${PROJECT_NAME}
-  src/nodelet.cpp
-  src/CanUsb.cpp
+add_library(${PROJECT_NAME} SHARED
   src/CanDriver.cpp
+  src/CanUsb.cpp
 )
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  rclcpp_components
+  std_msgs
+  can_msgs
+  lusb
+)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "${PROJECT_NAME}::CanDriver"
+  EXECUTABLE can_node
 )
 
-add_executable(can_node
-  src/node.cpp
-)
-target_link_libraries(can_node
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}
-)
-
-install(TARGETS ${PROJECT_NAME} can_node
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+install(TARGETS ${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
-install(FILES nodelets.xml
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-install(DIRECTORY firmware launch
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DESTINATION include/${PROJECT_NAME}
 )
 install(DIRECTORY scripts
-        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-        USE_SOURCE_PERMISSIONS
+  DESTINATION lib/${PROJECT_NAME}
+  USE_SOURCE_PERMISSIONS
+)
+install(DIRECTORY firmware launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
-if(CATKIN_BUILD_BINARY_PACKAGE)
-  # Install udev rules with dh_installudev: http://manpages.ubuntu.com/manpages/man1/dh_installudev.1.html
-  FILE(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/debian/udev)
-  FILE(GLOB UDEV_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/udev" "${CMAKE_CURRENT_SOURCE_DIR}/udev/*.rules")
-  FOREACH(FILENAME ${UDEV_FILES})
-    MESSAGE(STATUS "Appending contents of udev/${FILENAME} to debian/udev")
-    FILE(READ udev/${FILENAME} FILEDATA)
-    FILE(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/debian/udev ${FILEDATA})
-  ENDFOREACH(FILENAME)
+# Install udev rules with dh_installudev: http://manpages.ubuntu.com/manpages/man1/dh_installudev.1.html
+FILE(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/debian/udev)
+FILE(GLOB UDEV_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/udev" "${CMAKE_CURRENT_SOURCE_DIR}/udev/*.rules")
+FOREACH(FILENAME ${UDEV_FILES})
+  MESSAGE(STATUS "Appending contents of udev/${FILENAME} to debian/udev")
+  FILE(READ udev/${FILENAME} FILEDATA)
+  FILE(APPEND ${CMAKE_CURRENT_SOURCE_DIR}/debian/udev ${FILEDATA})
+ENDFOREACH(FILENAME)
+install(DIRECTORY udev
+        DESTINATION share/${PROJECT_NAME}
+)
 
-  # ROS Indigo/Jade on Ubuntu versions earlier than Xenial default to a udev priority of 40, which is not enough to override the default usb rule of priority 50
-  # http://manpages.ubuntu.com/manpages/trusty/man1/dh_installudev.1.html
-  # For ROS versions earlier than Kinetic, install duplicate rule of priority 59
-  STRING(REPLACE "_" "-" DEBIAN_PACKAGE_NAME ros-$ENV{ROS_DISTRO}-${PROJECT_NAME})
-  if($ENV{ROS_DISTRO} STRLESS kinetic)
-    install(FILES debian/udev
-            DESTINATION /lib/udev/rules.d
-            RENAME 59-${DEBIAN_PACKAGE_NAME}.rules
-    )
-  endif()
-else()
-  install(DIRECTORY udev
-          DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-  )
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(${PROJECT_NAME}_test_mac_addr "tests/test_mac_addr.cpp")
+  target_include_directories(${PROJECT_NAME}_test_mac_addr PUBLIC "include")
+  ament_target_dependencies(${PROJECT_NAME}_test_mac_addr "rclcpp" "can_msgs")
+
+  ament_add_gtest(${PROJECT_NAME}_test_module_version "tests/test_module_version.cpp")
+  target_include_directories(${PROJECT_NAME}_test_module_version PUBLIC "include")
+  ament_target_dependencies(${PROJECT_NAME}_test_module_version "rclcpp" "can_msgs")
 endif()
 
-if (CATKIN_ENABLE_TESTING)
-  add_subdirectory(tests)
-endif()
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+ament_package()

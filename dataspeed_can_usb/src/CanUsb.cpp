@@ -32,53 +32,49 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#include <dataspeed_can_usb/CanUsb.h>
-#include <lusb/UsbDevice.h>
-#include <string.h>	// memcpy() and memset()
+#include <dataspeed_can_usb/CanUsb.hpp>
+#include <lusb/UsbDevice.hpp>
+#include <cstring> // std::memcpy()
 #include <sstream>
+#include <queue>
 
 // Protocol definition
 #include "UsbCanMessages.h"
 
-#include <queue>
-class TxQueue
-{
+class TxQueue {
 public:
   TxQueue(size_t max_size) : max_size_(max_size) {}
-  ~TxQueue() {}
-  inline bool empty() const { return queue_.empty(); }
-  inline size_t size() const { return queue_.size(); }
-  inline MessageBuffer& front() { return queue_.front(); }
-  inline const MessageBuffer& front() const { return queue_.front(); }
-  inline MessageBuffer& back() { return queue_.back(); }
-  inline const MessageBuffer& back() const { return queue_.back(); }
-  inline bool push(const MessageBuffer& __x) {
+  bool empty() const { return queue_.empty(); }
+  size_t size() const { return queue_.size(); }
+  MessageBuffer& front() { return queue_.front(); }
+  const MessageBuffer& front() const { return queue_.front(); }
+  MessageBuffer& back() { return queue_.back(); }
+  const MessageBuffer& back() const { return queue_.back(); }
+  bool push(const MessageBuffer& __x) {
     if (queue_.size() < max_size_) {
       queue_.push(__x);
       return true;
     }
     return false;
   }
-  inline void pop() { queue_.pop(); }
-  inline size_t maxSize() const { return max_size_; }
+  void pop() { queue_.pop(); }
+  size_t maxSize() const { return max_size_; }
+
 private:
   size_t max_size_;
   std::queue<MessageBuffer> queue_;
 };
 
-namespace dataspeed_can_usb
-{
+namespace dataspeed_can_usb {
 
-CanUsb::CanUsb(lusb::UsbDevice *dev) : ready_(false), heap_dev_(false), dev_(dev), recv_callback_(NULL), version_major_(0), version_minor_(0), version_build_(0), version_comms_(0), serial_number_(0), num_channels_(0)
-{
-  if (!dev_) {
+CanUsb::CanUsb(lusb::UsbDevice *dev) : dev_(dev) {
+  if (dev_ == nullptr) {
     dev_ = new lusb::UsbDevice(USB_VID, USB_PID, USB_MI);
     heap_dev_ = true;
   }
   queue_ = new TxQueue(100);
 }
-CanUsb::~CanUsb()
-{
+CanUsb::~CanUsb() {
   if (dev_) {
     if (dev_->isOpen()) {
       dev_->stopBulkReadThread(STREAM_ENDPOINT);
@@ -95,12 +91,13 @@ CanUsb::~CanUsb()
   }
 }
 
-bool CanUsb::configure(const std::string &mac)
-{
+bool CanUsb::configure(const std::string &mac) {
   if (readVersion()) {
     if (getNumChannels()) {
       if (mac.empty() || mac_addr_.match(mac)) {
-        dev_->startBulkReadThread(boost::bind(&CanUsb::recvStream, this, _1, _2), STREAM_ENDPOINT);
+        using std::placeholders::_1;
+        using std::placeholders::_2;
+        dev_->startBulkReadThread(std::bind(&CanUsb::recvStream, this, _1, _2), STREAM_ENDPOINT);
         ready_ = true;
         return true;
       }
@@ -108,8 +105,7 @@ bool CanUsb::configure(const std::string &mac)
   }
   return false;
 }
-bool CanUsb::open(const std::string &mac)
-{
+bool CanUsb::open(const std::string &mac) {
   if (!isOpen()) {
     if (!dev_->isOpen()) {
       if (mac.empty()) {
@@ -139,8 +135,7 @@ bool CanUsb::open(const std::string &mac)
   }
   return isOpen();
 }
-bool CanUsb::isOpen()
-{
+bool CanUsb::isOpen() {
   if (ready_) {
     if (dev_->isOpen()) {
       return true;
@@ -150,15 +145,13 @@ bool CanUsb::isOpen()
   }
   return false;
 }
-void CanUsb::closeDevice()
-{
+void CanUsb::closeDevice() {
   dev_->stopBulkReadThread(STREAM_ENDPOINT);
   dev_->close();
   ready_ = false;
 }
 
-bool CanUsb::readVersion()
-{
+bool CanUsb::readVersion() {
   ConfigPacket packet;
   packet.msg_id = USB_ID_VERSION;
   if (writeConfig(&packet, sizeof(packet.msg_id))) {
@@ -176,8 +169,7 @@ bool CanUsb::readVersion()
   return false;
 }
 
-bool CanUsb::getNumChannels()
-{
+bool CanUsb::getNumChannels() {
   ConfigPacket packet;
   packet.msg_id = USB_ID_NUM_CHANNELS;
   if (writeConfig(&packet, sizeof(packet.msg_id))) {
@@ -190,20 +182,18 @@ bool CanUsb::getNumChannels()
   return false;
 }
 
-void CanUsb::recvStream(const void *data, int size)
-{
+void CanUsb::recvStream(const void *data, int size) {
   if (recv_callback_) {
-    const MessageBuffer *ptr = ((StreamPacket*)data)->msg;
+    const MessageBuffer *ptr = ((StreamPacket *)data)->msg;
     while (size >= (int)sizeof(*ptr)) {
-        size -= sizeof(*ptr);
-        recv_callback_(ptr->channel, ptr->id, ptr->extended, ptr->dlc, ptr->data);
-        ptr++;
+      size -= sizeof(*ptr);
+      recv_callback_(ptr->channel, ptr->id, ptr->extended, ptr->dlc, ptr->data);
+      ptr++;
     }
   }
 }
 
-bool CanUsb::reboot()
-{
+bool CanUsb::reboot() {
   ConfigPacket packet;
   packet.msg_id = USB_ID_REBOOT;
   if (writeConfig(&packet, sizeof(packet.msg_id))) {
@@ -213,8 +203,7 @@ bool CanUsb::reboot()
   return false;
 }
 
-bool CanUsb::reset()
-{
+bool CanUsb::reset() {
   ConfigPacket packet;
   packet.msg_id = USB_ID_RESET;
   if (writeConfig(&packet, sizeof(packet.msg_id))) {
@@ -226,8 +215,7 @@ bool CanUsb::reset()
   return false;
 }
 
-bool CanUsb::setBitrate(unsigned int channel, uint32_t bitrate, uint8_t mode)
-{
+bool CanUsb::setBitrate(unsigned int channel, uint32_t bitrate, uint8_t mode) {
   ConfigPacket packet;
   packet.msg_id = USB_ID_SET_BUS_CFG;
   packet.bus_cfg.channel = channel;
@@ -242,8 +230,7 @@ bool CanUsb::setBitrate(unsigned int channel, uint32_t bitrate, uint8_t mode)
   return false;
 }
 
-bool CanUsb::addFilter(unsigned int channel, uint32_t mask, uint32_t match)
-{
+bool CanUsb::addFilter(unsigned int channel, uint32_t mask, uint32_t match) {
   ConfigPacket packet;
   packet.msg_id = USB_ID_SET_FILTER;
   packet.filter.channel = channel;
@@ -261,8 +248,7 @@ bool CanUsb::addFilter(unsigned int channel, uint32_t mask, uint32_t match)
 }
 
 bool CanUsb::getStats(std::vector<uint32_t> &rx_drops, std::vector<uint32_t> &tx_drops,
-                      std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors, bool)
-{
+                      std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors, bool) {
   // TODO: implement clear functionality (last param)
   ConfigPacket packet;
   packet.msg_id = USB_ID_GET_STATS;
@@ -286,8 +272,7 @@ bool CanUsb::getStats(std::vector<uint32_t> &rx_drops, std::vector<uint32_t> &tx
   return false;
 }
 
-bool CanUsb::getTimeStamp(uint32_t &timestamp)
-{
+bool CanUsb::getTimeStamp(uint32_t &timestamp) {
   ConfigPacket packet;
   packet.msg_id = USB_ID_GET_TIME;
   if (writeConfig(&packet, sizeof(packet.msg_id))) {
@@ -300,23 +285,20 @@ bool CanUsb::getTimeStamp(uint32_t &timestamp)
   return false;
 }
 
-void CanUsb::sendMessage(unsigned int channel, uint32_t id, bool extended, uint8_t dlc, const uint8_t data[8], bool flush)
-{
+void CanUsb::sendMessage(unsigned int channel, uint32_t id, bool extended, uint8_t dlc, const uint8_t data[8], bool flush) {
   MessageBuffer msg;
-  msg.headerWord[0] = 0;
-  msg.headerWord[1] = 0;
+  msg.stamp = 0;
   msg.id = id;
   msg.extended = extended ? 1 : 0;
   msg.channel = channel;
   msg.dlc = dlc;
-  memcpy(msg.data, data, 8);
+  std::memcpy(msg.data, data, 8);
   queue_->push(msg);
   if (flush || (queue_->size() >= sizeof(StreamPacket) / sizeof(MessageBuffer))) {
     flushMessages();
   }
 }
-void CanUsb::flushMessages()
-{
+void CanUsb::flushMessages() {
   if (!queue_->empty()) {
     unsigned int num = std::min(queue_->size(), sizeof(StreamPacket) / sizeof(MessageBuffer));
     if (writeStream(&queue_->front(), num * sizeof(MessageBuffer))) {
@@ -327,23 +309,19 @@ void CanUsb::flushMessages()
   }
 }
 
-bool CanUsb::writeConfig(const void * data, int size)
-{
+bool CanUsb::writeConfig(const void *data, int size) {
   return writeConfig(data, size, USB_DEFAULT_TIMEOUT);
 }
-int CanUsb::readConfig(void * data, int size)
-{
+int CanUsb::readConfig(void *data, int size) {
   return readConfig(data, size, USB_DEFAULT_TIMEOUT);
 }
-bool CanUsb::writeConfig(const void * data, int size, int timeout)
-{
+bool CanUsb::writeConfig(const void *data, int size, int timeout) {
   if (!dev_->bulkWrite(data, size, CONFIGURATION_ENDPOINT, timeout)) {
     return false;
   }
   return true;
 }
-int CanUsb::readConfig(void * data, int size, int timeout)
-{
+int CanUsb::readConfig(void *data, int size, int timeout) {
   int len = dev_->bulkRead(data, size, CONFIGURATION_ENDPOINT, timeout);
   if (len < 0) {
     return -1;
@@ -351,15 +329,13 @@ int CanUsb::readConfig(void * data, int size, int timeout)
   return len;
 }
 
-bool CanUsb::writeStream(const void * data, int size)
-{
+bool CanUsb::writeStream(const void *data, int size) {
   if (!dev_->bulkWrite(data, size, STREAM_ENDPOINT, USB_DEFAULT_TIMEOUT)) {
     return false;
   }
   return true;
 }
-int CanUsb::readStream(void * data, int size)
-{
+int CanUsb::readStream(void *data, int size) {
   int len = dev_->bulkRead(data, size, STREAM_ENDPOINT, USB_DEFAULT_TIMEOUT);
   if (len < 0) {
     return -1;
@@ -367,12 +343,10 @@ int CanUsb::readStream(void * data, int size)
   return len;
 }
 
-std::string CanUsb::version() const
-{
+std::string CanUsb::version() const {
   std::stringstream s;
   s << version_major_ << "." << version_minor_ << "." << version_build_ << "-" << version_comms_;
   return s.str();
 }
 
 } // namespace dataspeed_can_usb
-

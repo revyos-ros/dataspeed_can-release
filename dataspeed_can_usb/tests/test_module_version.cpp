@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 // File under test
-#include <dataspeed_can_usb/ModuleVersion.h>
+#include <dataspeed_can_usb/ModuleVersion.hpp>
 using namespace dataspeed_can_usb;
 
 // Test empty constructor
@@ -63,4 +63,3 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 // File under test
-#include <dataspeed_can_msg_filters/ApproximateTime.h>
+#include <dataspeed_can_msg_filters/ApproximateTime.hpp>
 using namespace dataspeed_can_msg_filters;
 
 TEST(ApproxTimeSync, ValidId_PostMask)
@@ -267,11 +267,11 @@ TEST(ApproxTimeSync, BuildId)
 
 
 // Tests ported from https://github.com/ros/ros_comm/blob/2e6ac87958b59455aab0442b205163e9a5f43ff2/utilities/message_filters/test/test_approximate_time_policy.cpp
-typedef can_msgs::Frame Msg;
-typedef boost::shared_ptr<Msg> MsgPtr;
-typedef boost::shared_ptr<Msg const> MsgConstPtr;
+typedef can_msgs::msg::Frame Msg;
+typedef std::shared_ptr<Msg> MsgPtr;
+typedef std::shared_ptr<Msg const> MsgConstPtr;
 
-Msg MsgHelper(ros::Time stamp, uint32_t id, bool is_extended = false, bool is_error = false, bool is_rtr = false) {
+Msg MsgHelper(rclcpp::Time stamp, uint32_t id, bool is_extended = false, bool is_error = false, bool is_rtr = false) {
   Msg msg;
   msg.header.stamp = stamp;
   msg.id = id;
@@ -281,18 +281,20 @@ Msg MsgHelper(ros::Time stamp, uint32_t id, bool is_extended = false, bool is_er
   return msg;
 }
 
-typedef std::pair<ros::Time, ros::Time> TimePair;
+typedef std::pair<rclcpp::Time, rclcpp::Time> TimePair;
 struct TimeQuad
 {
-  TimeQuad(ros::Time p, ros::Time q, ros::Time r, ros::Time s)
+  TimeQuad(rclcpp::Time p, rclcpp::Time q, rclcpp::Time r, rclcpp::Time s)
   {
     time[0] = p;
     time[1] = q;
     time[2] = r;
     time[3] = s;
   }
-  ros::Time time[4];
+  rclcpp::Time time[4];
 };
+
+using std::placeholders::_1;
 
 //----------------------------------------------------------
 //                Test Class (for 2 inputs)
@@ -304,11 +306,11 @@ public:
           const std::vector<TimePair> &output,
           uint32_t queue_size, uint32_t id1, uint32_t id2) :
     input_(input), output_(output), output_position_(0),
-    sync_(queue_size, boost::bind(&ApproximateTimeSynchronizerTest::callback, this, _1), id1, id2)
+    sync_(queue_size, std::bind(&ApproximateTimeSynchronizerTest::callback, this, _1), id1, id2)
   {
   }
 
-  void callback(const std::vector<can_msgs::Frame::ConstPtr> &msgs)
+  void callback(const std::vector<can_msgs::msg::Frame::ConstSharedPtr> &msgs)
   {
     //printf("Call_back called\n");
     //printf("Call back: <%f, %f>\n", msgs[0]->header.stamp.toSec(), msgs[1]->header.stamp.toSec());
@@ -324,7 +326,7 @@ public:
   void run()
   {
     for (size_t i = 0; i < input_.size(); i++) {
-      sync_.processMsg(boost::make_shared<Msg>(input_[i]));
+      sync_.processMsg(std::make_shared<Msg>(input_[i]));
     }
     //printf("Done running test\n");
     EXPECT_EQ(output_.size(), output_position_);
@@ -349,11 +351,11 @@ public:
               const std::vector<TimeQuad> &output,
               uint32_t queue_size, uint32_t id1, uint32_t id2, uint32_t id3, uint32_t id4) :
     input_(input), output_(output), output_position_(0),
-    sync_(queue_size, boost::bind(&ApproximateTimeSynchronizerTestQuad::callback, this, _1), id1, id2, id3, id4)
+    sync_(queue_size, std::bind(&ApproximateTimeSynchronizerTestQuad::callback, this, _1), id1, id2, id3, id4)
   {
   }
 
-  void callback(const std::vector<can_msgs::Frame::ConstPtr> &msgs)
+  void callback(const std::vector<can_msgs::msg::Frame::ConstSharedPtr> &msgs)
   {
     //printf("Call_back called\n");
     //printf("Call back: <%f, %f>\n", msgs[0]->header.stamp.toSec(), msgs[1]->header.stamp.toSec());
@@ -373,7 +375,7 @@ public:
   void run()
   {
     for (size_t i = 0; i < input_.size(); i++) {
-      sync_.processMsg(boost::make_shared<Msg>(input_[i]));
+      sync_.processMsg(std::make_shared<Msg>(input_[i]));
     }
     //printf("Done running test\n");
     EXPECT_EQ(output_.size(), output_position_);
@@ -397,8 +399,8 @@ TEST(ApproxTimeSync, ExactMatch) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*0,1)); // A
@@ -422,8 +424,8 @@ TEST(ApproxTimeSync, PerfectMatch) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*1,1)); // A
@@ -446,8 +448,8 @@ TEST(ApproxTimeSync, ImperfectMatch) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*1,1)); // A
@@ -472,8 +474,8 @@ TEST(ApproxTimeSync, Acceleration) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0));  // a
   input.push_back(MsgHelper(t+s*7,1));  // A
@@ -498,8 +500,8 @@ TEST(ApproxTimeSync, DroppedMessages) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0));  // a
   input.push_back(MsgHelper(t+s*1,1));  // A
@@ -543,8 +545,8 @@ TEST(ApproxTimeSync, LongQueue) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0));  // a
   input.push_back(MsgHelper(t+s*1,0));  // b
@@ -579,8 +581,8 @@ TEST(ApproxTimeSync, DoublePublish) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*1,1)); // A
@@ -606,8 +608,8 @@ TEST(ApproxTimeSync, FourTopics) {
   std::vector<Msg> input;
   std::vector<TimeQuad> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0));  // a
   input.push_back(MsgHelper(t+s*1,1));  // b
@@ -645,8 +647,8 @@ TEST(ApproxTimeSync, EarlyPublish) {
   std::vector<Msg> input;
   std::vector<TimeQuad> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*1,1)); // b
@@ -668,8 +670,8 @@ TEST(ApproxTimeSync, RateBound) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*1,1)); // A
@@ -705,8 +707,8 @@ TEST(ApproxTimeSync, RateBoundAll) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0)); // a
   input.push_back(MsgHelper(t+s*1,1)); // A
@@ -741,8 +743,8 @@ TEST(ApproxTimeSync, ExtendedIds) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0,true )); // a
   input.push_back(MsgHelper(t+s*0,1,false)); // A
@@ -774,8 +776,8 @@ TEST(ApproxTimeSync, ErrorFrames) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0,false,true)); // a
   input.push_back(MsgHelper(t+s*0,1,false,true)); // A
@@ -797,8 +799,8 @@ TEST(ApproxTimeSync, RtrFrames) {
   std::vector<Msg> input;
   std::vector<TimePair> output;
 
-  ros::Time t(0, 0);
-  ros::Duration s(1, 0);
+  rclcpp::Time t(0, 0, RCL_ROS_TIME);
+  rclcpp::Duration s(1, 0);
 
   input.push_back(MsgHelper(t+s*0,0,false,false,true)); // a
   input.push_back(MsgHelper(t+s*0,1,false,false,true)); // A
@@ -818,4 +820,3 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-

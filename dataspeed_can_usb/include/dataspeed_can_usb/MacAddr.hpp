@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2020, Dataspeed Inc.
+ *  Copyright (c) 2015-2021, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,23 +32,24 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#ifndef _DATASPEED_CAN_USB_MAC_ADDR_H
-#define _DATASPEED_CAN_USB_MAC_ADDR_H
+#pragma once
 
 // Standard libraries
 #include <stdint.h>
+#include <cstring> // std::memcpy()
 #include <string>
 #include <sstream>
 #include <iomanip>  // std::setfill, std::setw
 #include <algorithm>
 
-namespace dataspeed_can_usb
-{
+namespace dataspeed_can_usb {
 
 class MacAddr {
 public:
-  MacAddr() { memset(addr_, 0x00, sizeof(addr_)); };
-  MacAddr(const uint8_t *addr) { memcpy(addr_, addr, sizeof(addr_)); };
+  MacAddr() {}
+  MacAddr(const uint8_t* addr) {
+    std::memcpy(addr_, addr, sizeof(addr_));
+  }
   MacAddr(uint8_t mac0, uint8_t mac1, uint8_t mac2, uint8_t mac3, uint8_t mac4, uint8_t mac5) {
     addr_[0] = mac0;
     addr_[1] = mac1;
@@ -56,7 +57,7 @@ public:
     addr_[3] = mac3;
     addr_[4] = mac4;
     addr_[5] = mac5;
-  };
+  }
   bool valid() const {
     return ((addr_[0] != 0x00) || (addr_[1] != 0x00) || (addr_[2] != 0x00) || (addr_[3] != 0x00) || (addr_[4] != 0x00) || (addr_[5] != 0x00))
         && ((addr_[0] != 0xFF) || (addr_[1] != 0xFF) || (addr_[2] != 0xFF) || (addr_[3] != 0xFF) || (addr_[4] != 0xFF) || (addr_[5] != 0xFF));
@@ -64,7 +65,9 @@ public:
   std::string toString(bool upper = false) const {
     std::stringstream ss;
     ss << std::setfill('0') << std::hex;
-    if (upper) { ss << std::uppercase; }
+    if (upper) {
+      ss << std::uppercase;
+    }
     ss << std::setw(2) << (unsigned int)addr_[0] << ":";
     ss << std::setw(2) << (unsigned int)addr_[1] << ":";
     ss << std::setw(2) << (unsigned int)addr_[2] << ":";
@@ -117,11 +120,9 @@ public:
   uint8_t mac3() const { return addr_[3]; }
   uint8_t mac4() const { return addr_[4]; }
   uint8_t mac5() const { return addr_[5]; }
+
 private:
-  uint8_t addr_[6];
+  uint8_t addr_[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 };
 
 } // namespace dataspeed_can_usb
-
-#endif // _DATASPEED_CAN_USB_MAC_ADDR_H
-

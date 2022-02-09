@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2020, Dataspeed Inc.
+ *  Copyright (c) 2015-2021, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,12 +32,18 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#ifndef _CAN_APPROXIMATE_TIME_H_
-#define _CAN_APPROXIMATE_TIME_H_
+#pragma once
 
 #include <deque>
-#include <ros/ros.h>
-#include <can_msgs/Frame.h>
+#include <can_msgs/msg/frame.hpp>
+#include <rclcpp/time.hpp>
+#include <rcutils/logging_macros.h>
+#include <inttypes.h> //for logging
+#include <chrono>
+
+#ifndef RCUTILS_ASSERT
+#define RCUTILS_ASSERT assert
+#endif
 
 namespace dataspeed_can_msg_filters
 {
@@ -67,8 +73,8 @@ namespace dataspeed_can_msg_filters
 class ApproximateTime
 {
 public:
-  typedef can_msgs::Frame::ConstPtr Type;
-  typedef boost::function<void(const std::vector<Type> &vec)> Callback;
+  typedef can_msgs::msg::Frame::ConstSharedPtr Type;
+  typedef std::function<void(const std::vector<Type> &vec)> Callback;
 
   static bool ValidId(uint32_t id)
   {
@@ -99,12 +105,12 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
 
     std::vector<uint32_t> ids(2);
     ids[0] = id1;
@@ -114,7 +120,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -123,13 +129,13 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
 
     std::vector<uint32_t> ids(3);
     ids[0] = id1;
@@ -140,7 +146,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -149,14 +155,14 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
-    ROS_ASSERT(ValidId(id4));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(ValidId(id4));
 
     std::vector<uint32_t> ids(4);
     ids[0] = id1;
@@ -168,7 +174,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -177,15 +183,15 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
-    ROS_ASSERT(ValidId(id4));
-    ROS_ASSERT(ValidId(id5));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(ValidId(id4));
+    RCUTILS_ASSERT(ValidId(id5));
 
     std::vector<uint32_t> ids(5);
     ids[0] = id1;
@@ -198,7 +204,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -207,16 +213,16 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
-    ROS_ASSERT(ValidId(id4));
-    ROS_ASSERT(ValidId(id5));
-    ROS_ASSERT(ValidId(id6));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(ValidId(id4));
+    RCUTILS_ASSERT(ValidId(id5));
+    RCUTILS_ASSERT(ValidId(id6));
 
     std::vector<uint32_t> ids(6);
     ids[0] = id1;
@@ -230,7 +236,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -239,17 +245,17 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
-    ROS_ASSERT(ValidId(id4));
-    ROS_ASSERT(ValidId(id5));
-    ROS_ASSERT(ValidId(id6));
-    ROS_ASSERT(ValidId(id7));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(ValidId(id4));
+    RCUTILS_ASSERT(ValidId(id5));
+    RCUTILS_ASSERT(ValidId(id6));
+    RCUTILS_ASSERT(ValidId(id7));
 
     std::vector<uint32_t> ids(7);
     ids[0] = id1;
@@ -264,7 +270,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -273,18 +279,18 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
-    ROS_ASSERT(ValidId(id4));
-    ROS_ASSERT(ValidId(id5));
-    ROS_ASSERT(ValidId(id6));
-    ROS_ASSERT(ValidId(id7));
-    ROS_ASSERT(ValidId(id8));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(ValidId(id4));
+    RCUTILS_ASSERT(ValidId(id5));
+    RCUTILS_ASSERT(ValidId(id6));
+    RCUTILS_ASSERT(ValidId(id7));
+    RCUTILS_ASSERT(ValidId(id8));
 
     std::vector<uint32_t> ids(8);
     ids[0] = id1;
@@ -300,7 +306,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -309,19 +315,19 @@ public:
 , callback_(callback)
 , num_non_empty_deques_(0)
 , pivot_(NO_PIVOT)
-, max_interval_duration_(ros::DURATION_MAX)
+, max_interval_duration_(rclcpp::Duration::max())
 , age_penalty_(0.1)
   {
-    ROS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
-    ROS_ASSERT(ValidId(id1));
-    ROS_ASSERT(ValidId(id2));
-    ROS_ASSERT(ValidId(id3));
-    ROS_ASSERT(ValidId(id4));
-    ROS_ASSERT(ValidId(id5));
-    ROS_ASSERT(ValidId(id6));
-    ROS_ASSERT(ValidId(id7));
-    ROS_ASSERT(ValidId(id8));
-    ROS_ASSERT(ValidId(id9));
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(ValidId(id1));
+    RCUTILS_ASSERT(ValidId(id2));
+    RCUTILS_ASSERT(ValidId(id3));
+    RCUTILS_ASSERT(ValidId(id4));
+    RCUTILS_ASSERT(ValidId(id5));
+    RCUTILS_ASSERT(ValidId(id6));
+    RCUTILS_ASSERT(ValidId(id7));
+    RCUTILS_ASSERT(ValidId(id8));
+    RCUTILS_ASSERT(ValidId(id9));
 
     std::vector<uint32_t> ids(9);
     ids[0] = id1;
@@ -338,7 +344,7 @@ public:
     for (size_t i = 0; i < ids.size(); i++) {
       vector_[i].id = ids[i];
       vector_[i].has_dropped_messages = false;
-      vector_[i].inter_message_lower_bounds = ros::Duration(0);
+      vector_[i].inter_message_lower_bounds = rclcpp::Duration(std::chrono::nanoseconds(0));
       vector_[i].warned_about_incorrect_bound = false;
     }
   }
@@ -347,7 +353,7 @@ public:
   void processMsg(const Type &msg)
   {
     if (msg->is_rtr || msg->is_error) return;
-    ROS_WARN_COND(!ValidId(msg), "Processed CAN message with invalid id: 0x%X (%s)", msg->id, msg->is_extended ? "extended" : "standard");
+    RCUTILS_LOG_WARN_EXPRESSION(!ValidId(msg), "Processed CAN message with invalid id: 0x%X (%s)", msg->id, msg->is_extended ? "extended" : "standard");
     for (size_t i = 0; i < vector_.size(); i++) {
       if (BuildId(msg) == vector_[i].id) {
 #if 0
@@ -376,7 +382,7 @@ public:
             recover(i);
           }}
           // Drop the oldest message in the offending topic
-          ROS_ASSERT(!deque.empty());
+          RCUTILS_ASSERT(!deque.empty());
           deque.pop_front();
           vector_[i].has_dropped_messages = true;
           if (pivot_ != NO_PIVOT) {
@@ -400,7 +406,7 @@ public:
    */
   void setAgePenalty(double age_penalty) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
-    ROS_ASSERT(age_penalty >= 0);
+    RCUTILS_ASSERT(age_penalty >= 0);
     age_penalty_ = age_penalty;
   }
 
@@ -412,8 +418,8 @@ public:
    * the last message of the set is received. An incorrect bound will result in suboptimal sets being selected. A typical
    * bound is, say, 1/2 the frame rate of a camera.
    */
-  void setInterMessageLowerBound(ros::Duration lower_bound) {
-    ROS_ASSERT(lower_bound >= ros::Duration(0,0));
+  void setInterMessageLowerBound(rclcpp::Duration lower_bound) {
+    RCUTILS_ASSERT(lower_bound >= rclcpp::Duration(0,0));
     for (size_t i = 0; i < vector_.size(); i++) {
       vector_[i].inter_message_lower_bounds = lower_bound;
     }
@@ -422,10 +428,10 @@ public:
   /*
    * Set the Inter message lower bound for each individual message index
    */
-  void setInterMessageLowerBound(size_t i, ros::Duration lower_bound) {
+  void setInterMessageLowerBound(size_t i, rclcpp::Duration lower_bound) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
-    ROS_ASSERT(lower_bound >= ros::Duration(0,0));
-    ROS_ASSERT(i < vector_.size());
+    RCUTILS_ASSERT(lower_bound >= rclcpp::Duration(0,0));
+    RCUTILS_ASSERT(i < vector_.size());
     vector_[i].inter_message_lower_bounds = lower_bound;
   }
 
@@ -433,9 +439,9 @@ public:
    * Set the Max interval duration: sets of more than this size will not be considered (disabled by default). The effect
    * is similar to throwing away a posteriori output sets that are too large, but it can be a little better.
    */
-  void setMaxIntervalDuration(ros::Duration max_interval_duration) {
+  void setMaxIntervalDuration(rclcpp::Duration max_interval_duration) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
-    ROS_ASSERT(max_interval_duration >= ros::Duration(0,0));
+    RCUTILS_ASSERT(max_interval_duration >= rclcpp::Duration(0,0));
     max_interval_duration_ = max_interval_duration;
   }
 
@@ -443,15 +449,14 @@ public:
 private:
   void checkInterMessageBound(size_t i)
   {
-    namespace mt = ros::message_traits;
     if (vector_[i].warned_about_incorrect_bound) {
       return;
     }
     std::deque<Type>& deque = vector_[i].deque;
     std::vector<Type>& v = vector_[i].past;
-    ROS_ASSERT(!deque.empty());
-    ros::Time msg_time = deque.back()->header.stamp;
-    ros::Time previous_msg_time;
+    RCUTILS_ASSERT(!deque.empty());
+    rclcpp::Time msg_time = deque.back()->header.stamp;
+    rclcpp::Time previous_msg_time;
     if (deque.size() == (size_t)1) {
       if (v.empty()) {
         // We have already published (or have never received) the previous message, we cannot check the bound
@@ -463,12 +468,17 @@ private:
       previous_msg_time =  deque[deque.size()-2]->header.stamp;
     }
     if (msg_time < previous_msg_time) {
-      ROS_WARN_STREAM("Messages of type " << i << " arrived out of order (will print only once)");
+      //RDM don't use this in normal code
+      RCUTILS_LOG_WARN_ONCE("Messages of type %" PRIu64 " arrived out of order (will print only once)", i);
       vector_[i].warned_about_incorrect_bound = true;
     } else if ((msg_time - previous_msg_time) < vector_[i].inter_message_lower_bounds) {
-      ROS_WARN_STREAM("Messages of type " << i << " arrived closer (" << (msg_time - previous_msg_time)
-          << ") than the lower bound you provided (" << vector_[i].inter_message_lower_bounds
-          << ") (will print only once)");
+      RCUTILS_LOG_WARN_ONCE("Messages of type %" PRIu64 " arrived closer ("
+              "%" PRId64 ") than the lower bound you provided ("
+              "%" PRId64 ") (will print only once)",
+              i,
+              (msg_time - previous_msg_time).nanoseconds(),
+              vector_[i].inter_message_lower_bounds.nanoseconds());
+
       vector_[i].warned_about_incorrect_bound = true;
     }
   }
@@ -477,7 +487,7 @@ private:
   void dequeDeleteFront(size_t i)
   {
     std::deque<Type>& deque = vector_[i].deque;
-    ROS_ASSERT(!deque.empty());
+    RCUTILS_ASSERT(!deque.empty());
     deque.pop_front();
     if (deque.empty()) {
       --num_non_empty_deques_;
@@ -489,7 +499,7 @@ private:
   {
     std::deque<Type>& deque = vector_[i].deque;
     std::vector<Type>& vector = vector_[i].past;
-    ROS_ASSERT(!deque.empty());
+    RCUTILS_ASSERT(!deque.empty());
     vector.push_back(deque.front());
     deque.pop_front();
     if (deque.empty()) {
@@ -511,7 +521,7 @@ private:
    {
      std::vector<Type>& v = vector_[i].past;
      std::deque<Type>& q = vector_[i].deque;
-     ROS_ASSERT(num_messages <= v.size());
+     RCUTILS_ASSERT(num_messages <= v.size());
      while (num_messages > 0) {
        q.push_front(v.back());
        v.pop_back();
@@ -547,7 +557,7 @@ private:
        v.pop_back();
      }
 
-     ROS_ASSERT(!q.empty());
+     RCUTILS_ASSERT(!q.empty());
 
      q.pop_front();
      if (!q.empty()) {
@@ -581,7 +591,7 @@ private:
 
    // Assumes: all deques are non empty, i.e. num_non_empty_deques_ == RealTypeCount::value
    // Returns: the oldest message on the deques
-   void getCandidateStart(uint32_t &start_index, ros::Time &start_time)
+   void getCandidateStart(uint32_t &start_index, rclcpp::Time &start_time)
    {
      return getCandidateBoundary(start_index, start_time, false);
    }
@@ -589,7 +599,7 @@ private:
    // Assumes: all deques are non empty, i.e. num_non_empty_deques_ == RealTypeCount::value
    // Returns: the latest message among the heads of the deques, i.e. the minimum
    //          time to end an interval started at getCandidateStart_index()
-   void getCandidateEnd(uint32_t &end_index, ros::Time &end_time)
+   void getCandidateEnd(uint32_t &end_index, rclcpp::Time &end_time)
    {
      return getCandidateBoundary(end_index, end_time, true);
    }
@@ -597,12 +607,12 @@ private:
    // ASSUMES: all deques are non-empty
    // end = true: look for the latest head of deque
    //       false: look for the earliest head of deque
-   void getCandidateBoundary(uint32_t &index, ros::Time &time, bool end)
+   void getCandidateBoundary(uint32_t &index, rclcpp::Time &time, bool end)
    {
      time = vector_[0].deque.front()->header.stamp;
      index = 0;
      for (size_t i = 1; i < vector_.size(); i++) {
-       const ros::Time &t = vector_[i].deque.front()->header.stamp;
+       const rclcpp::Time &t = vector_[i].deque.front()->header.stamp;
        if ((t < time) ^ end) {
          time = t;
          index = i;
@@ -611,39 +621,37 @@ private:
    }
 
    // ASSUMES: we have a pivot and candidate
-   ros::Time getVirtualTime(size_t i)
+   rclcpp::Time getVirtualTime(size_t i)
    {
-     namespace mt = ros::message_traits;
-
      if (i >= vector_.size()) {
-       return ros::Time(0,0);  // Dummy return value
+       return rclcpp::Time(0,0);  // Dummy return value
      }
-     ROS_ASSERT(pivot_ != NO_PIVOT);
+     RCUTILS_ASSERT(pivot_ != NO_PIVOT);
 
      std::vector<Type>& v = vector_[i].past;
      std::deque<Type>& q = vector_[i].deque;
      if (q.empty()) {
-       ROS_ASSERT(!v.empty());  // Because we have a candidate
-       ros::Time last_msg_time = v.back()->header.stamp;
-       ros::Time msg_time_lower_bound = last_msg_time + vector_[i].inter_message_lower_bounds;
+       RCUTILS_ASSERT(!v.empty());  // Because we have a candidate
+       rclcpp::Time last_msg_time = v.back()->header.stamp;
+       rclcpp::Time msg_time_lower_bound = last_msg_time + vector_[i].inter_message_lower_bounds;
        if (msg_time_lower_bound > pivot_time_) { // Take the max
          return msg_time_lower_bound;
        }
        return pivot_time_;
      }
-     ros::Time current_msg_time = q.front()->header.stamp;
+     rclcpp::Time current_msg_time = q.front()->header.stamp;
      return current_msg_time;
    }
 
 
    // ASSUMES: we have a pivot and candidate
-   void getVirtualCandidateStart(uint32_t &start_index, ros::Time &start_time)
+   void getVirtualCandidateStart(uint32_t &start_index, rclcpp::Time &start_time)
    {
      return getVirtualCandidateBoundary(start_index, start_time, false);
    }
 
    // ASSUMES: we have a pivot and candidate
-   void getVirtualCandidateEnd(uint32_t &end_index, ros::Time &end_time)
+   void getVirtualCandidateEnd(uint32_t &end_index, rclcpp::Time &end_time)
    {
      return getVirtualCandidateBoundary(end_index, end_time, true);
    }
@@ -651,11 +659,9 @@ private:
    // ASSUMES: we have a pivot and candidate
    // end = true: look for the latest head of deque
    //       false: look for the earliest head of deque
-   void getVirtualCandidateBoundary(uint32_t &index, ros::Time &time, bool end)
+   void getVirtualCandidateBoundary(uint32_t &index, rclcpp::Time &time, bool end)
    {
-     namespace mt = ros::message_traits;
-
-     std::vector<ros::Time> virtual_times(vector_.size());
+     std::vector<rclcpp::Time> virtual_times(vector_.size());
      for (size_t i = 0; i < vector_.size(); i++) {
        virtual_times[i] = getVirtualTime(i);
      }
@@ -680,7 +686,7 @@ private:
        //printf("Entering while loop in this state [\n");
        //show_internal_state();
        //printf("]\n");
-       ros::Time end_time, start_time;
+       rclcpp::Time end_time, start_time;
        uint32_t end_index, start_index;
        getCandidateEnd(end_index, end_time);
        getCandidateStart(start_index, start_time);
@@ -729,7 +735,7 @@ private:
          }
        }
        // INVARIANT: we have a candidate and pivot
-       ROS_ASSERT(pivot_ != NO_PIVOT);
+       RCUTILS_ASSERT(pivot_ != NO_PIVOT);
        //printf("start_index == %d, pivot_ == %d\n", start_index, pivot_);
        if (start_index == pivot_) { // TODO: replace with start_time == pivot_time_
          // We have exhausted all possible candidates for this pivot, we now can output the best one
@@ -747,7 +753,7 @@ private:
          // Before giving up, use the rate bounds, if provided, to further try to prove optimality
          std::vector<int> num_virtual_moves(9,0);
          while (1) {
-           ros::Time end_time, start_time;
+           rclcpp::Time end_time, start_time;
            uint32_t end_index, start_index;
            getVirtualCandidateEnd(end_index, end_time);
            getVirtualCandidateStart(start_index, start_time);
@@ -768,14 +774,14 @@ private:
                recover(i, num_virtual_moves[i]);
              }
              (void)num_non_empty_deques_before_virtual_search; // unused variable warning stopper
-             ROS_ASSERT(num_non_empty_deques_before_virtual_search == num_non_empty_deques_);
+             RCUTILS_ASSERT(num_non_empty_deques_before_virtual_search == num_non_empty_deques_);
              break;
            }
            // Note: we cannot reach this point with start_index == pivot_ since in that case we would
            //       have start_time == pivot_time, in which case the two tests above are the negation
            //       of each other, so that one must be true. Therefore the while loop always terminates.
-           ROS_ASSERT(start_index != pivot_);
-           ROS_ASSERT(start_time < pivot_time_);
+           RCUTILS_ASSERT(start_index != pivot_);
+           RCUTILS_ASSERT(start_time < pivot_time_);
            dequeMoveFrontToPast(start_index);
            num_virtual_moves[start_index]++;
          } // while(1)
@@ -789,27 +795,25 @@ private:
 
   static const uint32_t NO_PIVOT = 9;  // Special value for the pivot indicating that no pivot has been selected
 
-  typedef struct {
+  struct VectorData {
     uint32_t id;
     std::deque<Type> deque;
     std::vector<Type> past;
     Type candidate;  // NULL if there is no candidate, in which case there is no pivot.
     bool has_dropped_messages;
-    ros::Duration inter_message_lower_bounds;
+    rclcpp::Duration inter_message_lower_bounds;
     bool warned_about_incorrect_bound;
-  } VectorData;
+    VectorData() : inter_message_lower_bounds(rclcpp::Duration::max()) {}
+  };
   std::vector<VectorData> vector_;
   uint32_t num_non_empty_deques_;
-  ros::Time candidate_start_;
-  ros::Time candidate_end_;
-  ros::Time pivot_time_;
+  rclcpp::Time candidate_start_;
+  rclcpp::Time candidate_end_;
+  rclcpp::Time pivot_time_;
   uint32_t pivot_;  // Equal to NO_PIVOT if there is no candidate
 
-  ros::Duration max_interval_duration_; // TODO: initialize with a parameter
+  rclcpp::Duration max_interval_duration_; // TODO: initialize with a parameter
   double age_penalty_;
 };
 
 } // namespace dataspeed_can_msg_filters
-
-#endif // _CAN_APPROXIMATE_TIME_H_
-

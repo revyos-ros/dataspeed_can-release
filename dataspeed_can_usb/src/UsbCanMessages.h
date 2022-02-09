@@ -43,9 +43,6 @@
     #define PACK_ATTRIB	__attribute__ ((packed))
 #endif
 
-// Throw compiler errors on bad message sizes
-#define BUILD_ASSERT(cond) do { (void) sizeof(char [1 - 2*!(cond)]); } while(0)
-
 #define COMMS_VERSION 1
 
 #define USB_VID  0x6923
@@ -60,29 +57,16 @@ typedef struct PACK_ATTRIB {
     uint16_t minor;
     uint16_t build;
 } Version; // 6 bytes
-typedef union PACK_ATTRIB {
-	struct PACK_ATTRIB {
-        union PACK_ATTRIB {
-            struct PACK_ATTRIB {
-                uint32_t id :29;
-                uint32_t extended :1;
-                uint32_t channel :2;
-                uint32_t stamp :28;
-                uint32_t dlc :4;
-            };
-            uint32_t headerWord[2];
-        };
-        union PACK_ATTRIB {
-            uint8_t data[8];
-            uint32_t dataWord[2];
-        };
-	};
-	uint32_t messageWord[4];
+typedef struct PACK_ATTRIB {
+    uint32_t id :29;
+    uint32_t extended :1;
+    uint32_t channel :2;
+    uint32_t stamp :28;
+    uint32_t dlc :4;
+    uint8_t data[8];
 } MessageBuffer; // 16 bytes
-static inline void testCommonSizes() {
-    BUILD_ASSERT(sizeof(Version) == 6);
-    BUILD_ASSERT(sizeof(MessageBuffer) == 16);
-}
+static_assert(sizeof(Version) == 6);
+static_assert(sizeof(MessageBuffer) == 16);
 /******************************************************************************/
 
 
@@ -152,9 +136,8 @@ typedef union PACK_ATTRIB {
         uint8_t tx_errors[4];
     } stats;
 } ConfigPacket;
-static inline void testConfigurationInterfaceSizes() {
-    BUILD_ASSERT(sizeof(ConfigPacket) <= 64);
-}
+static_assert(sizeof(ConfigPacket) <= 64);
+
 /******************************************************************************/
 
 
@@ -165,12 +148,9 @@ static inline void testConfigurationInterfaceSizes() {
 typedef struct PACK_ATTRIB {
     MessageBuffer msg[4];
 } StreamPacket;
-static inline void testDataStreamSizes() {
-    BUILD_ASSERT(sizeof(StreamPacket) <= 64);
-}
+static_assert(sizeof(StreamPacket) <= 64);
 /******************************************************************************/
 
-#undef BUILD_ASSERT
 #undef PACK_ATTRIB
 #if defined(__linux__) || defined (_WIN32)
     #pragma pack(pop)	// Undo packing

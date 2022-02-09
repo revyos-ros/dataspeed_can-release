@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2015-2020, Dataspeed Inc.
+ *  Copyright (c) 2015-2021, Dataspeed Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,27 +32,22 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#ifndef _DATASPEED_CAN_USB_CAN_USB_H
-#define _DATASPEED_CAN_USB_CAN_USB_H
+#pragma once
 
 #include <stdint.h>
 #include <vector>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <dataspeed_can_usb/MacAddr.h>
+#include <functional>
+#include <dataspeed_can_usb/MacAddr.hpp>
 
-namespace lusb
-{
+namespace lusb {
 class UsbDevice;
 }
 
 class TxQueue;
 
-namespace dataspeed_can_usb
-{
+namespace dataspeed_can_usb {
 
-class CanUsb
-{
+class CanUsb {
 public:
   static const int USB_DEFAULT_TIMEOUT = 10;
   static const unsigned int MAX_CHANNELS = 4;
@@ -79,13 +74,14 @@ public:
   bool setBitrate(unsigned int channel, uint32_t bitrate, uint8_t mode = 0);
   bool addFilter(unsigned int channel, uint32_t mask, uint32_t match);
   bool getStats(std::vector<uint32_t> &rx_drops, std::vector<uint32_t> &tx_drops,
-                std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors, bool clear = false);
+                std::vector<uint8_t> &rx_errors, std::vector<uint8_t> &tx_errors,
+                bool clear = false);
   bool getTimeStamp(uint32_t &timestamp);
 
   void sendMessage(unsigned int channel, uint32_t id, bool extended, uint8_t dlc, const uint8_t data[8], bool flush = true);
   void flushMessages();
 
-  typedef boost::function<void(unsigned int channel, uint32_t id, bool extended, uint8_t dlc, const uint8_t data[8])> Callback;
+  typedef std::function<void(unsigned int channel, uint32_t id, bool extended, uint8_t dlc, const uint8_t data[8])> Callback;
   void setRecvCallback(const Callback &callback) {
     recv_callback_ = callback;
   }
@@ -97,30 +93,27 @@ private:
 
   void recvStream(const void *data, int size);
 
-  bool writeConfig(const void * data, int size);
-  int readConfig(void * data, int size);
-  bool writeConfig(const void * data, int size, int timeout);
-  int readConfig(void * data, int size, int timeout);
+  bool writeConfig(const void *data, int size);
+  int readConfig(void *data, int size);
+  bool writeConfig(const void *data, int size, int timeout);
+  int readConfig(void *data, int size, int timeout);
 
-  bool writeStream(const void * data, int size);
-  int readStream(void * data, int size);
+  bool writeStream(const void *data, int size);
+  int readStream(void *data, int size);
 
-  bool ready_;
-  bool heap_dev_;
+  bool ready_ = false;
+  bool heap_dev_ = false;
   lusb::UsbDevice *dev_;
-  Callback recv_callback_;
-  uint16_t version_major_;
-  uint16_t version_minor_;
-  uint16_t version_build_;
-  uint16_t version_comms_;
-  uint32_t serial_number_;
+  Callback recv_callback_ = nullptr;
+  uint16_t version_major_ = 0;
+  uint16_t version_minor_ = 0;
+  uint16_t version_build_ = 0;
+  uint16_t version_comms_ = 0;
+  uint32_t serial_number_ = 0;
   MacAddr mac_addr_;
-  unsigned int num_channels_;
+  unsigned int num_channels_ = 0;
 
-  TxQueue* queue_;
+  TxQueue *queue_;
 };
 
-} // namespace dataspeed_can_usb
-
-#endif // _DATASPEED_CAN_USB_CAN_USB_H
-
+}  // namespace dataspeed_can_usb
