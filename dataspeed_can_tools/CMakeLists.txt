@@ -1,13 +1,12 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(dataspeed_can_tools)
 
-find_package(catkin REQUIRED COMPONENTS
-  rosbag
-  roscpp
-  roslib
-  std_msgs
-  can_msgs
-)
+find_package(ament_cmake REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(can_msgs REQUIRED)
+find_package(dataspeed_can_msgs REQUIRED)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "Enabling coverage testing")
@@ -22,22 +21,31 @@ elseif ("${CMAKE_CXX_STANDARD_COMPUTED_DEFAULT}" STREQUAL "98")
   set(CMAKE_CXX_STANDARD 11)
 endif()
 
+# Detect rosbag2_storage version to handle single or dual recv/send timestamps
+message(STATUS "rosbag2_cpp_VERSION ${rosbag2_cpp_VERSION}")
+if(rosbag2_cpp_VERSION VERSION_LESS "0.26.0")
+  message(STATUS "rosbag2_storage with single message timestamp")
+  add_compile_definitions(rosbag2_storage_recv_time_stamp=time_stamp)
+  add_compile_definitions(rosbag2_storage_send_time_stamp=time_stamp)
+else()
+  message(STATUS "rosbag2_storage with separate recv/send timestamp")
+  add_compile_definitions(rosbag2_storage_recv_time_stamp=recv_timestamp)
+  add_compile_definitions(rosbag2_storage_send_time_stamp=send_timestamp)
+endif()
+
 add_compile_options(${TARGET_NAME} -Wall -Wextra -Werror) #-pedantic fails in rosconsole https://github.com/ros/rosconsole/issues/9
-
-catkin_package(
-  LIBRARIES ${PROJECT_NAME}
-)
-
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
 
 add_library(${PROJECT_NAME}
   src/DbcIterator.cpp src/DbcMessage.cpp src/DbcSignal.cpp
   src/CanExtractor.cpp
 )
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
+
+ament_target_dependencies(${PROJECT_NAME}
+  rosbag2_cpp
+  rclcpp
+  std_msgs
+  can_msgs
+  dataspeed_can_msgs
 )
 
 add_executable(dbc_node src/dbc_node.cpp)
@@ -50,11 +58,24 @@ target_link_libraries(dbc_bag
   ${PROJECT_NAME}
 )
 
+# Install targets
 install(TARGETS ${PROJECT_NAME} dbc_node dbc_bag
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        ARCHIVE DESTINATION lib/${PROJECT_NAME}
+        LIBRARY DESTINATION lib/${PROJECT_NAME}
+        RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+# Install test files
+install(
+    DIRECTORY tests/
+    DESTINATION share/${PROJECT_NAME}/tests
+    FILES_MATCHING
+    PATTERN "*.dbc"
 )
 
-if (CATKIN_ENABLE_TESTING)
-  add_subdirectory(tests)
+if (BUILD_TESTING)
+    add_subdirectory(tests)
 endif()
+
+ament_export_libraries(${PROJECT_NAME})
+
+ament_package()
