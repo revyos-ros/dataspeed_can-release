@@ -2,15 +2,15 @@
  * C++ unit test for dataspeed_can_tools/DbcSignal.hpp
  *********************************************************************/
 
+// File under test
+#include "../src/DbcSignal.hpp"
+
 #include <gtest/gtest.h>
 
 // String stream
 #include <iostream>
 #include <sstream>
 #include <string>
-
-// File under test
-#include "../src/DbcSignal.hpp"
 
 // Check that parsing valid signals does not cause an error.
 TEST(SIGNAL, parsing)
