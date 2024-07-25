@@ -32,23 +32,24 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#include <ros/ros.h>
-#include <ros/package.h>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/subscription.hpp>
 #include "CanExtractor.h"
-#include <can_msgs/Frame.h>
+#include <can_msgs/msg/frame.hpp>
 
-ros::NodeHandle *nh_;
+rclcpp::Node::SharedPtr node_;
 dataspeed_can_tools::CanExtractor* extractor_;
 
-void recv(const can_msgs::Frame::ConstPtr& msg)
+void recv(const can_msgs::msg::Frame::ConstSharedPtr& msg)
 {
   if (!msg->is_error && !msg->is_rtr) {
     dataspeed_can_tools::RosCanMsgStruct info;
     info.id = msg->id | (msg->is_extended ? 0x80000000 : 0x00000000);
 
     if (extractor_->getMessage(info)) {
-      ROS_DEBUG("New message ID (%d), initializing publishers...", info.id);
-      extractor_->initPublishers(info, *nh_);
+      RCLCPP_DEBUG(node_->get_logger(), "New message ID (%d), initializing publishers...", info.id);
+      extractor_->initPublishers(info, *node_);
     }
 
     extractor_->pubMessage(msg);
@@ -57,18 +58,24 @@ void recv(const can_msgs::Frame::ConstPtr& msg)
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "can_parser_node");
-  ros::NodeHandle nh; nh_ = &nh;
-  ros::NodeHandle nh_priv("~");
+  rclcpp::init(argc, argv);
+  node_ = rclcpp::Node::make_shared("can_parser_node");
+
+  // Declare parameters
+  node_->declare_parameter("dbc_files", rclcpp::ParameterType::PARAMETER_STRING_ARRAY);
+  node_->declare_parameter("expand",    rclcpp::ParameterType::PARAMETER_BOOL);
+  node_->declare_parameter("unknown",   rclcpp::ParameterType::PARAMETER_BOOL);
 
   std::vector<std::string> dbc_files;
-  if (!nh_priv.getParam("dbc_files", dbc_files)) {
-    ROS_FATAL("DBC file not specified. Exiting.");
+  if (!node_->get_parameter("dbc_files", dbc_files)) {
+    RCLCPP_FATAL(node_->get_logger(), "DBC file not specified. Exiting.");
+    rclcpp::shutdown(nullptr, "DBC file not specified.");
+    return -1;
   }
   bool expand;
-  nh_priv.param("expand", expand, true); 
+  expand = node_->get_parameter_or<bool>("expand", true);
   bool unknown;
-  nh_priv.param("unknown", unknown, false); 
+  unknown = node_->get_parameter_or<bool>("unknown", false);
 
   printf("Opening dbc files: \n");
   for (unsigned int i = 0; i < dbc_files.size(); i++) {
@@ -77,8 +84,8 @@ int main(int argc, char** argv)
   dataspeed_can_tools::CanExtractor extractor(dbc_files, false, expand, unknown);
   extractor_ = &extractor;
 
-  ros::Subscriber sub_can = nh.subscribe("can_rx", 100, recv);
+  auto qos = rclcpp::QoS(100);
+  auto sub_can = node_->create_subscription<can_msgs::msg::Frame>("can_rx", qos, recv);
 
-  ros::spin();
+  rclcpp::spin(node_);
 }
-

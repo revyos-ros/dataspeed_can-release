@@ -2,6 +2,22 @@
 Changelog for package dataspeed_can_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.4 (2024-07-25)
+------------------
+* Added parameter declarations to DBC node
+* Handle rosbag2_storage changes in Jazzy
+* Contributors: Gabe, Kevin Hallenbeck
+
+2.0.3 (2023-07-11)
+------------------
+* Migrated dataspeed_can_tools over to ROS2
+* Contributors: Gabriel Oetjens, Kevin Hallenbeck
+
+1.1.0 (2023-02-03)
+------------------
+* Add CAN-FD message support
+* Contributors: Nicholas Jankowski
+
 1.0.16 (2020-07-07)
 -------------------
 * Increase CMake minimum version to 3.0.2 to avoid warning about CMP0048
