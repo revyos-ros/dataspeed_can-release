@@ -78,7 +78,7 @@ CanDriver::CanDriver(const rclcpp::NodeOptions &options) : rclcpp::Node("can_nod
   error_topic_ = declare_parameter<bool>("error_topic", true);
   channel.bitrate = declare_parameter<int>("bitrate", kDefaultBitrate);
   mode = declare_parameter<std::string>("mode", kDefaultMode);
-  mac_addr_ = declare_parameter<std::string>("mac_addr", "");
+  mac_addr_ = declare_parameter<std::string>("mac_addr", std::string());
 
   RCLCPP_DEBUG(get_logger(), "sync_time = %d", sync_time_ ? 1 : 0);
   RCLCPP_DEBUG(get_logger(), "error_topic = %d", error_topic_ ? 1 : 0);
@@ -106,8 +106,10 @@ CanDriver::CanDriver(const rclcpp::NodeOptions &options) : rclcpp::Node("can_nod
         channels_[ch].filters.push_back(filter);
         RCLCPP_DEBUG(get_logger(), "channel %d filter %d mask 0x%08x match 0x%08x", ch, index, filter.mask, filter.match);
       } else {
+        #if 0 // Started causing runtime crash in Humble
         undeclare_parameter(mask_name);
         undeclare_parameter(match_name);
+        #endif
       }
     }
   }
