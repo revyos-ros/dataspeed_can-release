@@ -2,17 +2,17 @@
  * C++ unit test for dataspeed_can_tools/DbcIterator.hpp
  *********************************************************************/
 
+// File under test
+#include "../src/DbcIterator.hpp"
+
 #include <gtest/gtest.h>
 
-#include <ros/package.h>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 // String stream
 #include <iostream>
 #include <fstream>
 #include <string>
-
-// File under test
-#include "../src/DbcIterator.hpp"
 
 bool fileExists(const std::string& name) {
   std::ifstream f(name.c_str());
@@ -22,9 +22,10 @@ bool fileExists(const std::string& name) {
 // Check that parsing valid signals does not cause an error.
 TEST(ITERATOR, parsing)
 {
-  ASSERT_TRUE(fileExists(ros::package::getPath("dataspeed_can_tools")+"/tests/Test.dbc")) << "Could not find dbc file.";
+  std::string file = ament_index_cpp::get_package_share_directory("dataspeed_can_tools")+"/tests/Test.dbc";
+  ASSERT_TRUE(fileExists(file)) << "Could not find dbc file: " << file;
   try {
-    DBCIterator dbc(ros::package::getPath("dataspeed_can_tools")+"/tests/Test.dbc");
+    DBCIterator dbc(file);
   } catch (const std::exception&) {
     printf("Could not open file.\n");
     FAIL();
@@ -34,9 +35,10 @@ TEST(ITERATOR, parsing)
 // Check the values output by parsing valid signals.
 TEST(ITERATOR, data)
 {
-  ASSERT_TRUE(fileExists(ros::package::getPath("dataspeed_can_tools")+"/tests/Test.dbc")) << "Could not find dbc file.";
-  DBCIterator dbc(ros::package::getPath("dataspeed_can_tools")+"/tests/Test.dbc");
-  
+  std::string file = ament_index_cpp::get_package_share_directory("dataspeed_can_tools")+"/tests/Test.dbc";
+  ASSERT_TRUE(fileExists(file)) << "Could not find dbc file: " << file;
+  DBCIterator dbc(file);
+
   Message msg = dbc[0];
   EXPECT_EQ(msg.getId(), 166u);
   EXPECT_EQ(msg.getName(), "MultiplexTest");
@@ -231,7 +233,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg[0].getMinimum(), 0);
   EXPECT_EQ(msg[0].getMaximum(), 0);
   EXPECT_EQ(msg[0].getUnit(), "");
-  
+
   EXPECT_EQ(msg[1].getName(), "AdvancedSignal1");
   EXPECT_EQ(msg[1].getMultiplexor(), NONE);
   EXPECT_EQ(msg[1].getStartbit(), 0);
@@ -298,7 +300,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg[0].getMinimum(), 0);
   EXPECT_EQ(msg[0].getMaximum(), 0);
   EXPECT_EQ(msg[0].getUnit(), "");
-  
+
   EXPECT_EQ(msg[1].getName(), "MotorolaSignal32");
   EXPECT_EQ(msg[1].getMultiplexor(), NONE);
   EXPECT_EQ(msg[1].getStartbit(), 7);
@@ -317,7 +319,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg.getName(), "MotorolaTestA");
   EXPECT_EQ(msg.getDlc(), 6u);
   EXPECT_EQ(msg.getFrom(), "Vector__XXX");
-  
+
   EXPECT_EQ(msg[0].getName(), "MotorolaSignalU16");
   EXPECT_EQ(msg[0].getMultiplexor(), NONE);
   EXPECT_EQ(msg[0].getStartbit(), 39);
@@ -329,7 +331,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg[0].getMinimum(), 0);
   EXPECT_EQ(msg[0].getMaximum(), 0);
   EXPECT_EQ(msg[0].getUnit(), "");
-  
+
   EXPECT_EQ(msg[1].getName(), "MotorolaSignal16");
   EXPECT_EQ(msg[1].getMultiplexor(), NONE);
   EXPECT_EQ(msg[1].getStartbit(), 23);
@@ -341,7 +343,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg[1].getMinimum(), 0);
   EXPECT_EQ(msg[1].getMaximum(), 0);
   EXPECT_EQ(msg[1].getUnit(), "");
-  
+
   EXPECT_EQ(msg[2].getName(), "MotorolaSignalU8");
   EXPECT_EQ(msg[2].getMultiplexor(), NONE);
   EXPECT_EQ(msg[2].getStartbit(), 15);
@@ -463,7 +465,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg[1].getMinimum(), 0);
   EXPECT_EQ(msg[1].getMaximum(), 0);
   EXPECT_EQ(msg[1].getUnit(), "");
-  
+
   EXPECT_EQ(msg[2].getName(), "IntelSignalU8");
   EXPECT_EQ(msg[2].getMultiplexor(), NONE);
   EXPECT_EQ(msg[2].getStartbit(), 8);
@@ -475,7 +477,7 @@ TEST(ITERATOR, data)
   EXPECT_EQ(msg[2].getMinimum(), 0);
   EXPECT_EQ(msg[2].getMaximum(), 0);
   EXPECT_EQ(msg[2].getUnit(), "");
-  
+
   EXPECT_EQ(msg[3].getName(), "IntelSignal8");
   EXPECT_EQ(msg[3].getMultiplexor(), NONE);
   EXPECT_EQ(msg[3].getStartbit(), 0);
